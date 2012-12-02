@@ -1,0 +1,156 @@
+<!DOCTYPE html PUBLIC "-//W3C//DTD XHTML 1.0 Strict//EN" "http://www.w3.org/TR/xhtml1/DTD/xhtml1-strict.dtd">
+<html xmlns="http://www.w3.org/1999/xhtml">
+<head>
+	<title>{#hungryfeed.title}</title>
+	<script type="text/javascript" src="../../../../wp-includes/js/tinymce/tiny_mce_popup.js"></script>
+	<script type="text/javascript" src="editor_dialog.js"></script>
+	<style>
+		.frmBody {height:290px; overflow: auto;}
+		.frmRow {margin-top: 8px;}
+		.frmSet {margin-top: 10px; width: 395px;}
+		.frmExample {color: #888888; font-style: italic;}
+		.frmBody .title {margin-bottom: 12px;}
+	</style>
+	
+	
+</head>
+<body>
+
+<form onsubmit="HungryFeedDialog.insert();return false;" action="#">
+
+	<div class="frmBody">
+	
+		<div class="title">HungryFEED Inline RSS Feed Wizard:</div>
+		
+		<fieldset>
+			<legend>Enter the RSS Feed URL</legend>
+			<div class="frmRow">
+				<label for="url">RSS Feed URL:</label>
+				<input id="url" style="width: 300px;" name="url" type="text" class="text" value="" />
+			</div>
+		</fieldset>
+			
+		<fieldset class="frmSet">
+			<legend>Customize Fields</legend>	
+			<p>Feed Fields: 
+				<input id="feed_fields_title" name="feed_fields" type="checkbox" class="text" value="title" checked="checked" /> Title
+				<input id="feed_fields_description" name="feed_fields" type="checkbox" class="text" value="description" checked="checked" /> Description
+			</p>
+			
+			<p>Item Fields: 
+				<input id="item_fields_title" name="item_fields" type="checkbox" class="text" value="title" checked="checked" /> Title
+				<input id="item_fields_description" name="item_fields" type="checkbox" class="text" value="description" checked="checked" /> Description
+				<input id="item_fields_author" name="item_fields" type="checkbox" class="text" value="author" checked="checked" /> Author
+				<input id="item_fields_date" name="item_fields" type="checkbox" class="text" value="date" checked="checked" /> Date
+			</p>
+		</fieldset>
+		
+		<fieldset class="frmSet">
+			<legend>Title Link</legend>
+			
+			<p>Link Item Title To Full Post: 
+				<input id="link_item_title_yes" name="link_item_title" type="radio" class="text" value="1" checked="checked" /> Yes
+				<input id="link_item_title_no" name="link_item_title" type="radio" class="text" value="0" /> No
+			</p>
+			
+			<p>Open Link In:
+				<select id="link_target" name="link_target">
+					<option value="">Default Window</option>
+					<option value="_blank">New Browser Window</option>
+					<option value="_top">Top Frame</option>
+				</select>
+			</p>
+		</fieldset>
+		
+		
+		<fieldset class="frmSet">
+			<legend>Customize Output and Display</legend>
+			
+			<p>Use HTML Template: <select id="template" name="template">
+					<option value="">Default</option>
+					<option value="1">Custom Template 1</option>
+					<option value="2">Custom Template 2</option>
+					<option value="3">Custom Template 3</option>
+				</select>
+			</p>
+
+			<p>Truncate Description To: <input style="width: 30px;" id="truncate_description" name="truncate_description" type="text" class="text" value="0" /> Characters (0 = No Limit)</p>
+
+			<p>Allow Only These HTML Tags: <input id="allowed_tags" name="allowed_tags" type="text" class="text" value="" /> (ex. p,br,hr)</p>
+			
+			<p>Strip Ellipsis From End: 
+				<input id="strip_ellipsis_yes" name="strip_ellipsis" type="radio" class="text" value="1" /> Yes
+				<input id="strip_ellipsis_no" name="strip_ellipsis" type="radio" class="text" value="0" checked="checked" /> No
+			</p>
+			
+			<p>Date Format: <input id="date_format" name="date_format" type="text" class="text" value="" /> (ex. Y-m-d see <a href="http://www.php.net/manual/en/function.date.php" target="_blank">suported formats...</a>)</p>
+			
+		</fieldset>
+
+		<fieldset class="frmSet">
+			<legend>Feed Items Filter and Sorting</legend>
+			
+			<p>Display Maximum of <input style="width: 20px;" id="max_items" name="max_items" type="text" class="text" value="0" /> Items</p>
+	
+			<div class="frmRow">
+				<label for="filter_out">Only Include Posts Containing These Keywords:</label>
+				<input id="filter" name="filter" type="text" class="text" value="" /> 
+			</div>
+			<div class="frmExample">Example: free|new|exciting</div>
+	
+			<div class="frmRow">
+				<label for="filter_out">Exclude Posts Containing These Keywords:</label>
+				<input id="filter_out" name="filter_out" type="text" class="text" value="" />
+			</div>
+			<div class="frmExample">Example: bad|terrible|ugly</div>
+	
+			<p>Split Feed Into <input style="width: 20px;" id="page_size" name="page_size" type="text" class="text" value="0" /> Items Per Page (0 = No Pagination)</p>
+	
+			<p>Sort Feed Items in: <select id="order" name="order">
+					<option value="">Default</option>
+					<option value="reverse">Reverse</option>
+					<option value="random">Random</option>
+					<option value="none">Not Sorted</option>
+				</select>
+			Order</p>
+		</fieldset>
+		
+		
+		<fieldset class="frmSet">
+			<legend>Debug Settings</legend>
+			
+			<p>Force processing for feeds with incorrect content type: 
+				<input id="force_feed_yes" name="force_feed" type="radio" class="text" value="1" /> Yes
+				<input id="force_feed_no" name="force_feed" type="radio" class="text" value="0" checked="checked"  /> No
+			</p>
+			
+			<p>Attempt to decode HTML formatting in feed URL
+				<input id="decode_url_yes" name="decode_url" type="radio" class="text" value="1" checked="checked"  /> Yes
+				<input id="decode_url_no" name="decode_url" type="radio" class="text" value="0" /> No
+			</p>
+			
+			<p>Dump Raw XML Contents of Feed on Error
+				<input id="xml_dump_yes" name="xml_dump" type="radio" class="text" value="1" /> Yes
+				<input id="xml_dump_no" name="xml_dump" type="radio" class="text" value="0" checked="checked" /> No
+			</p>
+
+			<p>Display the Data Array
+				<input id="show_data_yes" name="show_data" type="radio" class="text" value="1" /> Yes
+				<input id="show_data_no" name="show_data" type="radio" class="text" value="0" checked="checked" /> No
+			</p>
+		
+		</fieldset>
+		
+	</div>
+
+	<div class="mceActionPanel" style="padding-top: 15px; text-align: right;">
+		<input type="button" id="insert" name="insert" value="{#insert}" onclick="HungryFeedDialog.insert();" />
+		<!-- 
+		<input type="button" id="cancel" name="cancel" value="{#cancel}" onclick="tinyMCEPopup.close();" />
+		-->
+	</div>
+		
+</form>
+
+</body>
+</html>

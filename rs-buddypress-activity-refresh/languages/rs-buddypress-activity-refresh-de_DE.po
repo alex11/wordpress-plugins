@@ -1,0 +1,48 @@
+# Translation of the WordPress plugin RS Buddypress Activity Refresh by Florian Koenig-Heidinger <florian@spitzohr.de>.
+# Copyright (C) 2010
+# This file is distributed under the same license as the RS Buddypress Activity Refresh package.
+# Florian Koenig-Heidinger <florian@spitzohr.de>, 2010.
+#
+msgid ""
+msgstr ""
+"Project-Id-Version: RS Buddypress Activity Refresh\n"
+"Report-Msgid-Bugs-To: http://wordpress.org/tag/rs-buddypress-activity-refresh\n"
+"POT-Creation-Date: 2010-11-25 09:03+0000\n"
+"PO-Revision-Date: 2010-11-25 10:17+0100\n"
+"Last-Translator: Florian Koenig-Heidinger <florian@spitzohr.de>\n"
+"Language-Team: Spitzohr <florian@spitzohr.de>\n"
+"MIME-Version: 1.0\n"
+"Content-Type: text/plain; charset=utf-8\n"
+"Content-Transfer-Encoding: 8bit\n"
+"X-Poedit-Language: German\n"
+"X-Poedit-Country: GERMANY\n"
+
+#: rs-bp-activity-refresh.php:234
+msgid "You do not have sufficient permissions to access this page."
+msgstr "Sie haben nicht die benötigten Rechte um auf diese Seite zugreifen zu können."
+
+#: rs-bp-activity-refresh.php:244
+msgid "Settings Updated."
+msgstr "Einstellungen wurden aktualisiert."
+
+#: rs-bp-activity-refresh.php:252
+msgid "Refresh Rate"
+msgstr "Aktualisierungsfrequenz"
+
+#: rs-bp-activity-refresh.php:253
+#, php-format
+msgid "This value is the refresh rate in seconds. Default value is %d. If you set this value to 0, the refresh is disabled."
+msgstr "Dieser Wert stellt die Aktualisierungsfrequenz in Sekunden dar. Der Standardwert ist %d. Wenn Sie den Wert auf 0 setzen, wird die automatische Aktualisierung deaktiviert."
+
+#: rs-bp-activity-refresh.php:254
+msgid "seconds"
+msgstr "Sekunden"
+
+#: rs-bp-activity-refresh.php:257
+msgid "Update Settings"
+msgstr "Einstellungen aktualisieren"
+
+#: rs-bp-activity-refresh.php:278
+msgid "Settings"
+msgstr "Einstellungen"
+

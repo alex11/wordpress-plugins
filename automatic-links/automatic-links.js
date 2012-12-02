@@ -1,0 +1,1 @@
+jQuery(document).ready(function(){if(!jQuery("#autolink_enable_target").is(":checked")){jQuery("#autolink_target").hide()}});function toggleAutolinkTarget(){if(jQuery("#autolink_enable_target").is(":checked")){jQuery("#autolink_target").show()}else{jQuery("#autolink_target").hide()}};

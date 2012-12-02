@@ -1,0 +1,1 @@
+../../../../themes/alex11-V.2/buddypress-activity -plus/images_tag_template.php

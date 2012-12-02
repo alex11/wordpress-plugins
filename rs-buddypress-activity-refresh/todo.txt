@@ -1,0 +1,12 @@
+- Bugfix
+-- check IDs with JavaScript before inserting new activities
+   Problem: Sometimes the new entry of a user would appear twice
+
+- Performance
+-- [DONE] only loop over new entries
+
+
+
+Further releases
+- remove deleted entries from list while live updating the list
+- thread mode insert of new comments
