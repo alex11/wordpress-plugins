@@ -448,7 +448,7 @@ class EM_Booking extends EM_Object{
 		$action_string = strtolower($this->status_array[$status]); 
 		//if we're approving we can't approve a booking if spaces are full, so check before it's approved.
 		if(!$ignore_spaces && $status == 1){
-			if( $this->get_event()->get_bookings()->get_available_spaces() < $this->get_spaces() && !get_option('dbem_bookings_approval_overbooking') ){
+			if( !$this->is_reserved() && $this->get_event()->get_bookings()->get_available_spaces() < $this->get_spaces() && !get_option('dbem_bookings_approval_overbooking') ){
 				$this->feedback_message = sprintf(__('Not approved, spaces full.','dbem'), $action_string);
 				$this->add_error($this->feedback_message);
 				return apply_filters('em_booking_set_status', false, $this);
@@ -475,6 +475,18 @@ class EM_Booking extends EM_Object{
 			$this->add_error(sprintf(__('Booking could not be %s.','dbem'), $action_string));
 		}
 		return apply_filters('em_booking_set_status', $result, $this);
+	}
+	
+	function is_reserved(){
+	    $result = false;
+	    if( $this->booking_status == 0 && get_option('dbem_bookings_approval_reserved') ){
+	        $result = true;
+	    }elseif( $this->booking_status == 0 && !get_option('dbem_bookings_approval') ){
+	        $result = true;
+	    }elseif( $this->booking_status == 1 ){
+	        $result = true;
+	    }
+	    return apply_filters('em_booking_is_reserved', $result, $this);
 	}
 	
 	/**
@@ -653,9 +665,10 @@ class EM_Booking extends EM_Object{
 						}
 					}
 					//email admin
-					if( get_option('dbem_bookings_notify_admin') != '' && preg_match('/^([_\.0-9a-z-]+@([0-9a-z][0-9a-z-]+\.)+[a-z]{2,3},?)+$/', get_option('dbem_bookings_notify_admin')) ){
+					if( get_option('dbem_bookings_notify_admin') != '' && preg_match('/^([_\.0-9a-z-]+@([0-9a-z][0-9a-z-]+\.)+[a-z]{2,3}( *, *)?)+$/', get_option('dbem_bookings_notify_admin')) ){
 						$admin_emails =  get_option('dbem_bookings_notify_admin');
-						$admin_emails = explode(',', $admin_emails); //supply emails as array 
+						$admin_emails = explode(',', $admin_emails); //supply emails as array
+						foreach($admin_emails as $key => $email){ $admin_emails[$key] = trim($email); } //strip whitespace
 						if( !$this->email_send( $msg['admin']['subject'], $msg['admin']['body'], $admin_emails) ){
 							$this->errors[] = __('Confirmation email could not be sent to admin. Registrant should have gotten their email (only admin see this warning).','dbem');
 							$result = false;
