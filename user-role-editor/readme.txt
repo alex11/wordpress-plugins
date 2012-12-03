@@ -68,6 +68,7 @@ To read more about 'User Role Editor' visit [this page](http://www.shinephp.com/
 * Serbian: [Diana](http://wpcouponshop.com)
 * Spanish: [Victor Ricardo Díaz (INFOMED)](http://www.sld.cu)
 * Swedish: [Christer Dahlbacka](www.startlinks.eu), [Andréas Lundgren](http://adevade.com/)
+* Traditional Chinese (Jingxin Lai)
 * Turkish: [Muhammed YILDIRIM](http://ben.muhammed.im)
 * -----------------------------------------------------
 * translations below are included to the package, but all of them are outdated and every file needs to be updated. You are welcome!
@@ -85,6 +86,11 @@ Share with me new ideas about plugin further development and link to your site w
 
 
 == Changelog ==
+= 3.8.2 =
+* 02.12.2012
+* load_plugin_textdomain() call moved to the 'plugins_loaded' hook for higher compatibility with translation plugins.
+* Traditional Chinese translation is added. Thanks to Jingxin Lai.
+
 = 3.8.1 =
 * 21.10.2012
 * Fix: URE taked roles names from the database directly and ignored changes made to roles names on the fly by other plugins or themes, names, which were cached by WordPress internally, but were not written to the database. URE uses WordPress internal cache now.

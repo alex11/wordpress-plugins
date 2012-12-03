@@ -3,7 +3,7 @@
 Plugin Name: User Role Editor
 Plugin URI: http://www.shinephp.com/user-role-editor-wordpress-plugin/
 Description: It allows you to change/add/delete any WordPress user role (except administrator) capabilities list with a few clicks.
-Version: 3.8.1
+Version: 3.8.2
 Author: Vladimir Garagulya
 Author URI: http://www.shinephp.com
 Text Domain: ure
@@ -54,7 +54,17 @@ define('URE_KEY_CAPABILITY', 'administrator');
 
 require_once('includes/ure-lib.php');
 
-load_plugin_textdomain('ure','', $urePluginDirName.'/lang');
+
+/**
+ * Load URE plugin translation files - linked to the 'plugins_loaded' action
+ * 
+ */
+function ure_load_translation() {
+	
+	load_plugin_textdomain( 'ure', '', dirname( plugin_basename( __FILE__ ) ) . DIRECTORY_SEPARATOR .'lang' );
+	
+}
+// end of ure_load_translation()
 
 
 function ure_optionsPage() {
@@ -191,8 +201,8 @@ function exclude_admins_view($views) {
 
 function ure_init() {
 
-  global $current_user, $wp_roles;
-  
+  global $current_user;
+  	
   if (!empty($current_user->ID)) {
     $user_id = $current_user->ID;
   } else {
@@ -346,11 +356,13 @@ if (function_exists('is_multisite') && is_multisite()) {
 if (is_admin()) {
   // activation action
   register_activation_hook(__FILE__, "ure_install");
-  add_action('admin_init', 'ure_init');  
+	/* Add the translation function after the plugins loaded hook. */
+	add_action( 'plugins_loaded', 'ure_load_translation' );
+  add_action( 'admin_init', 'ure_init' );  
   // add a Settings link in the installed plugins page
-  add_filter('plugin_action_links', 'ure_plugin_action_links', 10, 2);
-  add_filter('plugin_row_meta', 'ure_plugin_row_meta', 10, 2);
-  add_action('admin_menu', 'ure_settings_menu');
+  add_filter( 'plugin_action_links', 'ure_plugin_action_links', 10, 2 );
+  add_filter( 'plugin_row_meta', 'ure_plugin_row_meta', 10, 2 );
+  add_action( 'admin_menu', 'ure_settings_menu' );
   add_action( 'user_row_actions', 'ure_user_row', 10, 2 );
 }
 

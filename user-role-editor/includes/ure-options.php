@@ -220,13 +220,13 @@ ure_showMessage($mess);
 		</div>  
 
 		<div style="text-align: center;">
-			<a title="ManageWP" href="http://managewp.com/?utm_source=user_role_editor&utm_medium=Banner&utm_content=mwp250_2&utm_campaign=Plugins" targer="_new" >
+			<a title="ManageWP" href="http://managewp.com/?utm_source=user_role_editor&utm_medium=Banner&utm_content=mwp250_2&utm_campaign=Plugins" target="_new" >
 				<img width="250" height="250" alt="ManageWP" src="<?php echo URE_PLUGIN_URL; ?>/images/mwp250_2.png">
 			</a>                        
 		</div>  
 
-		<div style="width: 250px;text-align: center;">
-			<a href="http://chooseplugin.com"><img src="<?php echo URE_PLUGIN_URL . '/images/chooseplugin.png'; ?>" alt="ChoosePlugin.com" title="Advanced search plugins service from User Role Editor developer" style="border: 1px solid #CCCCCC;"/></a>
+		<div style="text-align: center;">
+			<a href="http://chooseplugin.com"><img src="<?php echo URE_PLUGIN_URL . '/images/chooseplugin.png'; ?>" alt="Choose WordPress plugins with ChoosePlugin.com" title="Advanced search WordPress plugins service from User Role Editor developer" /></a>
 		</div>  
 
 		<?php ure_displayBoxStart(__('About this Plugin:', 'ure')); ?>
@@ -285,6 +285,7 @@ ure_showMessage($mess);
 			<span title="<?php _e("For the help with Spanish translation", 'ure'); ?>" >Dario  Ferrer</span>
 			<a class="ure_rsb_link" style="background-image:url(<?php echo URE_PLUGIN_URL . '/images/andreas.png'; ?>)" target="_blank" title="<?php _e("For the updated Swedish translation", 'ure'); ?>" href="http://adevade.com/">Andréas Lundgren</a>
 			<a class="ure_rsb_link" style="background-image:url(<?php echo URE_PLUGIN_URL . '/images/christer.png'; ?>)" target="_blank" title="<?php _e("For the help with Swedish translation", 'ure'); ?>" href="http://www.startlinks.eu">Christer Dahlbacka</a>
+			<span title="<?php _e("For the help with Traditional Chinese translation", 'ure'); ?>">Jingxin Lai</span>
 			<a class="ure_rsb_link" style="background-image:url(<?php echo URE_PLUGIN_URL . '/images/muhammed.png'; ?>)" target="_blank" title="<?php _e("For the help with Turkish translation", 'ure'); ?>" href="http://ben.muhammed.im/">Muhammed YILDIRIM</a>
 			<hr />
 			<a class="ure_rsb_link" style="background-image:url(<?php echo URE_PLUGIN_URL . '/images/fullthrottle.png'; ?>)" target="_blank" title="<?php _e("For the code to hide administrator role", 'ure'); ?>" href="http://fullthrottledevelopment.com/how-to-hide-the-adminstrator-on-the-wordpress-users-screen">FullThrottle</a>
