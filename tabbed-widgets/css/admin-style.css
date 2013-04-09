@@ -1,0 +1,13 @@
+
+.tw-title {  }
+input.tw-widget-title { width:25em; }
+label.tw-in-widget-list select { width:15em; }
+label.tw-in-widget-title input { width:10em; }
+.tw-rotate-time input { width:3em; }
+.tw-each-tab { padding:0.5em; margin:0.25em 0; background-color:#eee; }
+.tw-randomstart, .tw-rotateoptions { padding:0.5em; border-bottom:1px solid #ddd; }
+.widget .widget-inside p.tw-widget-note { font-size:1em; border-top:1px solid #ddd; margin:0; padding:0.25em 0; display:block; color:#666; clear:both; }
+.widget-wrapper .tw-style-type label.active { background-color:#eee; padding:0.15em 0.25em; -moz-border-radius:0.5em; -webkit-border-radius:0.5em; }
+.widget .widget-inside .tw-donate { float:right; font-size:0.94em; }
+.widget .widget-inside .tw-donate a { color:green; }
+.widget .widget-inside .tw-style-type { float:left; }

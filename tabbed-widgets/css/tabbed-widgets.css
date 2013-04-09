@@ -1,0 +1,20 @@
+/* 	
+	These are only the default styles.
+	If you wish to add your own CSS styles, it is best to amend your theme's style.css file.
+*/
+
+/* General */
+.tw-content { float:left; width:100%; clear:both; }
+.tabbed-widget { float:left; width:100%; clear:both; }
+.tabbed-widget .ui-tabs-hide { display:none; }
+
+/* Tabs */
+.tw-tabbed-nav { float:left; width:100%; clear:both; margin:0; padding:0; }
+.tw-tabbed-nav li { float:left; display:block; margin:0; padding:0; }
+.tw-tabbed-nav a { float:left; margin-right:1sem; }
+
+/* Accordion */
+.tw-accordion .tw-title a { display:block; outline:0; }
+.tw-accordion .ui-state-default a { background:url('../images/onlight-accordion-closed.png') no-repeat 100% 50%; }
+.tw-accordion .ui-state-active a { background:url('../images/onlight-accordion-open.png') no-repeat 100% 50%; color:#333; text-decoration:none; }
+

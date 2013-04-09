@@ -1,0 +1,51 @@
+# Translation of the WordPress plugin Twitter Tabs Widget by SlipFire LLC..
+# Copyright (C) 2010 SlipFire LLC.
+# This file is distributed under the same license as the Tabber Tabs Widget package.
+# FIRST AUTHOR <EMAIL@ADDRESS>, 2010.
+#
+#, fuzzy
+msgid ""
+msgstr ""
+"Project-Id-Version:  \n"
+"Report-Msgid-Bugs-To: http://wordpress.org/tag/tabber-tabs-widget\n"
+"POT-Creation-Date: 2010-05-20 01:56+0000\n"
+"PO-Revision-Date: 2010-MO-DA HO:MI+ZONE\n"
+"Last-Translator: FULL NAME <EMAIL@ADDRESS>\n"
+"Language-Team: LANGUAGE <LL@li.org>\n"
+"MIME-Version: 1.0\n"
+"Content-Type: text/plain; charset=utf-8\n"
+"Content-Transfer-Encoding: 8bit\n"
+
+#: tabber-tabs.php:48
+msgid "Tabber Tabs Widget Area"
+msgstr ""
+
+#: tabber-tabs.php:50
+msgid ""
+"Build your tabbed area by placing widgets here.  !! IMPORTANT: DO NOT PLACE "
+"THE TABBER TABS WIDGET IN THIS AREA.  BAD THINGS WILL HAPPEN !! Place the "
+"TABBER TABS widget in another widget area. "
+msgstr ""
+
+#: tabber-tabs.php:111
+#, php-format
+msgid ""
+"Tabber Tabs Widget is activated.  To start using, add some widgets to the <a "
+"href=\"%s\">Tabber Tabs Widget Area</a>."
+msgstr ""
+
+#: tabber-widget.php:16 tabber-widget.php:52
+msgid "Place items in the TABBER TABS WIDGET AREA and have them show up here."
+msgstr ""
+
+#: tabber-widget.php:18
+msgid "Tabber Tabs Widget"
+msgstr ""
+
+#: tabber-widget.php:47
+msgid "Tabber"
+msgstr ""
+
+#: tabber-widget.php:56
+msgid "Tab Style:"
+msgstr ""
