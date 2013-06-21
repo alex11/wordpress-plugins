@@ -103,6 +103,24 @@ foreach($ure_roles as $role) {
     }
   }
 }
+
+//add caps from custom post types
+foreach(get_post_types(array('_builtin'=>false),'objects') as $key=>$object){
+	//1
+	//echo "post type key:$key";var_dump($object->cap);
+	foreach($object->cap as $capability){
+		$cap['inner']=$capability;
+		$cap['human']= __(ure_ConvertCapsToReadable($capability),'ure');
+		if ( isset( $built_in_wp_caps[ $key ] ) ) {
+			$cap['wp_core'] = true;				
+		} else {
+			$cap['wp_core'] = false;				
+		}
+		$ure_fullCapabilities[$capability] = $cap;
+		//echo "adding $capability";var_dump($cap);
+	}
+	
+}
 asort($ure_fullCapabilities);
 
 
