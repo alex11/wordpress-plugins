@@ -51,6 +51,7 @@ define('URE_ERROR', 'Error is encountered');
 define('URE_SPACE_REPLACER', '_URE-SR_');
 define('URE_PARENT', 'users.php');
 define('URE_KEY_CAPABILITY', 'administrator');
+define('URE_SHOW_ADMIN_ROLE',true);
 
 require_once('includes/ure-lib.php');
 
