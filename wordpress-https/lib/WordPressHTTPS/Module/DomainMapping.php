@@ -18,13 +18,13 @@ class WordPressHTTPS_Module_DomainMapping extends Mvied_Plugin_Module {
 	 * @return void
 	 */
 	public function init() {
-		if ( is_admin() && isset($_GET['page']) && strpos($_GET['page'], $this->getPlugin()->getSlug()) !== false ) {
-			if ( $_SERVER['REQUEST_METHOD'] == 'POST' && isset($_POST['action']) && $_POST['action'] == 'wphttps-domain-mapping' ) {
-				add_action('plugins_loaded', array(&$this, 'save'), 1);
+		if ( is_admin() ) {
+			add_action('wp_ajax_' . $this->getPlugin()->getSlug() . '_domain_mapping_save', array(&$this, 'save'));
+			add_action('wp_ajax_' . $this->getPlugin()->getSlug() . '_domain_mapping_reset', array(&$this, 'reset'));
+			if ( isset($_GET['page']) && strpos($_GET['page'], $this->getPlugin()->getSlug()) !== false ) {
+				// Add meta boxes
+				add_action('admin_init', array(&$this, 'add_meta_boxes'));
 			}
-
-			// Add meta boxes
-			add_action('admin_init', array(&$this, 'add_meta_boxes'));
 		}
 
 		// Custom filter https_external_url
@@ -68,36 +68,47 @@ class WordPressHTTPS_Module_DomainMapping extends Mvied_Plugin_Module {
 	}
 
 	/**
+	 * Reset Domain Mapping
+	 *
+	 * @param array $settings
+	 * @return void
+	 */
+	public function reset() {
+		if ( !wp_verify_nonce($_POST['_wpnonce'], $this->getPlugin()->getSlug()) ) {
+			return false;
+		}
+
+		$message = "Domain Mapping reset.";
+		$errors = array();
+		$reload = true;
+
+		$this->getPlugin()->setSetting('ssl_host_mapping', WordPressHTTPS::$ssl_host_mapping);
+
+		require_once($this->getPlugin()->getDirectory() . '/admin/templates/ajax_message.php');
+	}
+
+	/**
 	 * Save Domain Mapping
 	 *
 	 * @param array $settings
 	 * @return void
 	 */
 	public function save() {
-		if ( !wp_verify_nonce($_POST['_wpnonce'], $this->getPlugin()->getSlug() . '-options') ) {
+		if ( !wp_verify_nonce($_POST['_wpnonce'], $this->getPlugin()->getSlug()) ) {
 			return false;
 		}
 
 		$message = "Domain Mapping saved.";
 		$errors = array();
 		$reload = false;
-		$logout = false;
-		if ( isset($_POST['domain_mapping-save']) ) {
-			$ssl_host_mapping = array();
-			for( $i=0; $i<sizeof($_POST['http_domain']); $i++ ) {
-				if ( isset($_POST['http_domain'][$i]) && $_POST['http_domain'][$i] != '' && isset($_POST['https_domain'][$i]) && $_POST['https_domain'][$i] != '' ) {
-					$ssl_host_mapping[$_POST['http_domain'][$i]] = $_POST['https_domain'][$i];
-				}
-			}
-			$this->getPlugin()->setSetting('ssl_host_mapping', $ssl_host_mapping);
-		} else if ( isset($_POST['domain_mapping-reset']) ) {
-			$this->getPlugin()->setSetting('ssl_host_mapping', WordPressHTTPS::$ssl_host_mapping);
-			$reload = true;
-		}
 
-		if ( $logout ) {
-			wp_logout();
+		$ssl_host_mapping = array();
+		for( $i=0; $i<sizeof($_POST['http_domain']); $i++ ) {
+			if ( isset($_POST['http_domain'][$i]) && $_POST['http_domain'][$i] != '' && isset($_POST['https_domain'][$i]) && $_POST['https_domain'][$i] != '' ) {
+				$ssl_host_mapping[str_replace('\\\\', '\\', $_POST['http_domain'][$i])] = str_replace('\\\\', '\\', $_POST['https_domain'][$i]);
+			}
 		}
+		$this->getPlugin()->setSetting('ssl_host_mapping', $ssl_host_mapping);
 
 		require_once($this->getPlugin()->getDirectory() . '/admin/templates/ajax_message.php');
 	}

@@ -441,6 +441,21 @@ class WordPressHTTPS_Url {
 	}
 
 	/**
+	 * Compares URL objects to determine if either of them are a subdomain of the other.
+	 * 
+	 * @param WordPressHTTPS_Url $url
+	 * @return boolean
+	 */
+	public function isSubdomain( WordPressHTTPS_Url $url ) {
+		$this_host = $this->getBaseHost();
+		$other_host = $url->getBaseHost();
+		if ( $this_host == $other_host ) {
+			return true;
+		}
+		return false;
+	}
+
+	/**
 	 * Factory object from an array provided by the parse_url function
 	 * 
 	 * Example of usage:
@@ -453,16 +468,16 @@ class WordPressHTTPS_Url {
 		if ( sizeof($array) <= 1 ) {
 			return false;
 		}
-		
+
 		$url = new WordPressHTTPS_Url;
-		foreach( $array as $key => $value ) {
-			$property = '_' . $key;
-			$camelCase = create_function('$c', 'return strtoupper($c[1]);');
-			$method = 'set' . preg_replace_callback('/_([a-z])/', $camelCase, $property);
-			if ( method_exists($url, $method) ) {
-				call_user_func(array($url, $method), $value);
-			}
-		}
+		$url->setScheme(@$array['scheme']);
+		$url->setUser(@$array['user']);
+		$url->setPass(@$array['pass']);
+		$url->setHost(@$array['host']);
+		$url->setPort(@$array['port']);
+		$url->setPath(@$array['path']);
+		$url->setQuery(@$array['query']);
+		$url->setFragment(@$array['fragment']);
 
 		return $url;
 	}
@@ -482,15 +497,14 @@ class WordPressHTTPS_Url {
 		@preg_match_all('/((http|https):\/\/[^\'"]+)[\'"\)]?/i', $string, $url_parts);
 		if ( isset($url_parts[1][0]) ) {
 			if ( $url_parts = parse_url( $url_parts[1][0] ) ) {
-				foreach( $url_parts as $key => $value ) {
-					$property = '_' . $key;
-					$camelCase = create_function('$c', 'return strtoupper($c[1]);');
-					$method = 'set' . preg_replace_callback('/_([a-z])/', $camelCase, $property);
-					if ( method_exists($url, $method) ) {
-						call_user_func(array($url, $method), $value);
-					}
-				}
-
+				$url->setScheme(@$url_parts['scheme']);
+				$url->setUser(@$url_parts['user']);
+				$url->setPass(@$url_parts['pass']);
+				$url->setHost(@$url_parts['host']);
+				$url->setPort(@$url_parts['port']);
+				$url->setPath(@$url_parts['path']);
+				$url->setQuery(@$url_parts['query']);
+				$url->setFragment(@$url_parts['fragment']);
 				return $url;
 			}
 		} else {
@@ -520,7 +534,7 @@ class WordPressHTTPS_Url {
 		$string = ( $this->getScheme() ? $this->getScheme() . '://' : '' ) . 
 		( $this->getUser() ? $this->getUser() . ( $this->getPass() ? ':' . $this->getPass() : '' ) . '@' : '' ) . 
 		$this->getHost() .
-		( $this->getPort()  ? ':' . $this->getPort() : '' ) . 
+		( $this->getPort() && ( ( $this->getPort() != 80 && $this->getScheme() == 'http' ) || ( $this->getPort() != 443 && $this->getScheme() == 'https' ) )  ? ':' . $this->getPort() : '' ) . 
 		$this->getPath() . 
 		( $this->getQuery() ? '?' . $this->getQuery() : '' ) . 
 		( $this->getFragment() ? '#' . $this->getFragment() : '' );

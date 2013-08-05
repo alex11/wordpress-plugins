@@ -68,7 +68,7 @@ class WordPressHTTPS_Module_Parser extends Mvied_Plugin_Module {
 	 *
 	 * @param string $url
 	 * @param string $type
-	 * @return void
+	 * @return boolean
 	 */
 	public function secureElement( $url, $type = '' ) {
 		$updated = false;
@@ -108,10 +108,13 @@ class WordPressHTTPS_Module_Parser extends Mvied_Plugin_Module {
 	 *
 	 * @param string $url
 	 * @param string $type
-	 * @return void
+	 * @return boolean
 	 */
 	public function unsecureElement( $url, $type = '' ) {
 		$updated = false;
+		$result = false;
+		$upload_dir = wp_upload_dir();
+		$upload_path = str_replace($this->getPlugin()->getHttpsUrl()->getPath(), $this->getPlugin()->getHttpUrl()->getPath(), parse_url($upload_dir['baseurl'], PHP_URL_PATH));
 
 		if ( ! is_admin() || ( is_admin() && strpos($url, $upload_path) === false ) ) {
 			$updated = $this->getPlugin()->makeUrlHttp($url);
@@ -121,10 +124,13 @@ class WordPressHTTPS_Module_Parser extends Mvied_Plugin_Module {
 		// Add log entry if this change hasn't been logged
 		if ( $updated && $url != $updated ) {
 			$log = '[FIXED] Element: ' . ( $type != '' ? '<' . $type . '> ' : '' ) . $url . ' => ' . $updated;
+			$result = true;
 		}
 		if ( isset($log) && ! in_array($log, $this->getPlugin()->getLogger()->getLog()) ) {
 			$this->getPlugin()->getLogger()->log($log);
 		}
+
+		return $result;
 	}
 
 	/**
@@ -180,6 +186,7 @@ class WordPressHTTPS_Module_Parser extends Mvied_Plugin_Module {
 			if	( $type == 'img' || $type == 'script' || $type == 'embed' || $type == 'iframe' ||
 				( $type == 'link' && ( strpos($html, 'stylesheet') !== false || strpos($html, 'pingback') !== false ) ) ||
 				( $type == 'form' && strpos($html, 'wp-pass.php') !== false ) ||
+				( $type == 'form' && strpos($html, 'wp-login.php?action=postpass') !== false ) ||
 				( $type == 'form' && strpos($html, 'commentform') !== false ) ||
 				( $type == 'input' && strpos($html, 'image') !== false ) ||
 				( $type == 'param' && strpos($html, 'movie') !== false )
@@ -298,6 +305,9 @@ class WordPressHTTPS_Module_Parser extends Mvied_Plugin_Module {
 			$scheme = $matches[3][$i];
 			$updated = false;
 			$post_id = null;
+			$blog_id = null;
+			$force_ssl = null;
+			$url_path = '/';
 
 			if ( !$this->getPlugin()->isUrlLocal($url) ) {
 				continue;
@@ -334,39 +344,77 @@ class WordPressHTTPS_Module_Parser extends Mvied_Plugin_Module {
 				}
 
 				if ( is_multisite() && isset($url_parts['host']) ) {
-					$blog_id = false;
-					$url_path = '/';
-					$url_path_segments = explode('/', $url_parts['path']);
-					if ( sizeof($url_path_segments) > 1 ) {
-						foreach( $url_path_segments as $url_path_segment ) {
-							if ( !$blog_id && $url_path_segment != '' ) {
-								$url_path .= '/' . $url_path_segment . '/';
-								if ( $blog_id = get_blog_id_from_url( $url_parts['host'], $url_path) ) {
-									break;
+					if ( is_subdomain_install() ) {
+						$blog_id = get_blog_id_from_url( $url_parts['host'], '/');
+					} else {
+						$url_path_segments = explode('/', $url_parts['path']);
+						if ( sizeof($url_path_segments) > 1 ) {
+							foreach( $url_path_segments as $url_path_segment ) {
+								if ( is_null($blog_id) && $url_path_segment != '' ) {
+									$url_path .= $url_path_segment . '/';
+									if ( ($blog_id = get_blog_id_from_url( $url_parts['host'], $url_path)) > 0 ) {
+										break;
+									} else {
+										$blog_id = null;
+									}
 								}
 							}
 						}
 					}
-					if ( !$blog_id ) {
-						$blog_id = get_blog_id_from_url( $url_parts['host'], '/');
-					}
-					if ( $blog_id && $blog_id != $wpdb->blogid ) {
-						if ( $this->getPlugin()->getSetting('ssl_admin', $blog_id) && ( ! $this->getPlugin()->getSetting('ssl_host_diff', $blog_id) || ( $this->getPlugin()->getSetting('ssl_host_diff', $blog_id) && function_exists('is_user_logged_in') && is_user_logged_in() ) ) ) {
+
+					if ( !is_null($blog_id) && $blog_id != $wpdb->blogid ) {
+						// URL Filters
+						if ( sizeof((array)$this->getPlugin()->getSetting('secure_filter', $blog_id)) > 0 ) {
+							foreach( $this->getPlugin()->getSetting('secure_filter', $blog_id) as $filter ) {
+								if ( preg_match('/' . str_replace('/', '\/', $filter) . '/', $url) === 1 ) {
+									$force_ssl = true;
+								}
+							}
+						}
+						if ( ( $this->getPlugin()->getSetting('ssl_admin', $blog_id) || defined('FORCE_SSL_ADMIN') && constant('FORCE_SSL_ADMIN') ) && strpos($url_parts['path'], 'wp-admin') !== false && ( ! $this->getPlugin()->getSetting('ssl_host_diff', $blog_id) || ( $this->getPlugin()->getSetting('ssl_host_diff', $blog_id) && function_exists('is_user_logged_in') && is_user_logged_in() ) ) ) {
 							$force_ssl = true;
-						} else {
+						} else if ( is_null($force_ssl) && $this->getPlugin()->getSetting('exclusive_https', $blog_id) ) {
 							$force_ssl = false;
+						} else if ( strpos($url, 'https://') === 0 ) {
+							$force_ssl = true;
 						}
 					}
 				}
 			}
 
-			$force_ssl = apply_filters('force_ssl', null, ( isset($post_id) ? $post_id : 0 ), $url );
+			// Only apply force_ssl filters for current blog
+			if ( is_null($blog_id) ) {
+				$force_ssl = apply_filters('force_ssl', null, ( isset($post_id) ? $post_id : 0 ), $url );
+			}
 
 			if ( $force_ssl == true ) {
-				$updated = $this->getPlugin()->makeUrlHttps($url);
+				if ( is_null($blog_id) ) {
+					$updated = $this->getPlugin()->makeUrlHttps($url);
+				} else {
+					if ( $this->getPlugin()->getSetting('ssl_host', $blog_id) ) {
+						$ssl_host = $this->getPlugin()->getSetting('ssl_host', $blog_id);
+					} else {
+						$ssl_host = parse_url(get_home_url($blog_id, '/'), PHP_URL_HOST);
+					}
+					if ( is_subdomain_install() ) {
+						$host = $url_parts['host'] . '/';
+					} else {
+						$host = $url_parts['host'] . '/' . $url_path;
+					}
+					$updated = str_replace($url_parts['scheme'] . '://' . $host, $ssl_host, $url);
+				}
 				$this->_html = str_replace($html, str_replace($url, $updated, $html), $this->_html);
 			} else if ( !is_null($force_ssl) && !$force_ssl ) {
-				$updated = $this->getPlugin()->makeUrlHttp($url);
+				if ( is_null($blog_id) ) {
+					$updated = $this->getPlugin()->makeUrlHttp($url);
+				} else {
+					if ( is_subdomain_install() ) {
+						$host = $url_parts['host'] . '/';
+					} else {
+						$host = $url_parts['host'] . '/' . $url_path;
+					}
+					$updated = str_replace($url_parts['scheme'] . '://' . $host, get_home_url($blog_id, '/'), $url);
+				}
 				$this->_html = str_replace($html, str_replace($url, $updated, $html), $this->_html);
 			}
 

@@ -3,18 +3,27 @@ Contributors: Mvied
 Donate link: https://www.paypal.com/cgi-bin/webscr?cmd=_s-xclick&hosted_button_id=N9NFVADLVUR7A
 Tags: security, encryption, ssl, shared ssl, private ssl, public ssl, private ssl, http, https
 Requires at least: 3.0
-Tested up to: 3.4
-Stable tag: 3.2.3
+Tested up to: 3.5
+Stable tag: 3.3.6
 License: GPLv3
 
 WordPress HTTPS is intended to be an all-in-one solution to using SSL on WordPress sites.
 
 == Description ==
-If you're having partially encrypted/mixed content errors or other problems, please read the <a href="http://wordpress.org/extend/plugins/wordpress-https/faq/">FAQ</a>. If you're still having trouble, please <a href="http://wordpress.org/support/plugin/wordpress-https">start a support topic</a> and I will do my best to assist you.
+<p>Read the <a href="http://wordpress.org/extend/plugins/wordpress-https/installation/">Installation Guide</a>. If after setting up the plugin you are experiencing issues, please check the <a href="http://wordpress.org/extend/plugins/wordpress-https/faq/">FAQ</a>.</p>
+<p>If you are still unable to resolve your issue, <a href="http://wordpress.org/support/plugin/wordpress-https">start a support topic</a> and I or someone from the community will be able to assist you.</p>
+<p>Contribute Code at <a href="https://github.com/Mvied/wordpress-https">https://github.com/Mvied/wordpress-https</a></p>
+<p>Contribute Translations at <a href="https://translate.foe-services.de/projects/wordpress-https">https://translate.foe-services.de/projects/wordpress-https</a></p>
 
 == Installation ==
 1. Upload the `wordpress-https` folder to the `/wp-content/plugins/` directory.
 1. Activate the plugin through the 'Plugins' menu in WordPress.
+1. Navigate to the HTTPS settings page in the admin sidebar in the dashboard.
+1. If you are using a non-default SSL Host for your HTTPS connection (e.g., a subdomain or shared SSL host) enter the entire secure URL into SSL Host. If your installation is located in a folder, you can choose to include it in the URL or not. If you set this to a domain that is not currently serving your WordPress installation over HTTPS and enable Force SSL Admin, you will lock yourself out of your dashboard. Follow instructions in the FAQ to reset the plugin.
+1. If you would like connections to your admin panel to be secure, enable Force SSL Admin. If you are using a non-default SSL Host, do not use WordPress' built-in FORCE_SSL_ADMIN or FORCE_SSL_LOGIN.
+1. If you are looking to secure only your admin panel and/or posts and pages you specify, enable Force SSL Exclusively. This will ensure that any content not specified to be secure is always served over HTTP.
+1. You can individually secure post and pages when editing them by updating the settings located in the HTTPS box on the right sidebar.
+1. You can use simple text match or regular expressions to specify URL's that should be secure using URL Filters in the WordPress HTTPS settings. Each filter should be on one line.
 
 == Frequently Asked Questions ==
 = How do I fix partially encrypted/mixed content errors? =
@@ -34,8 +43,14 @@ Once you have identified the insecure elements, you need to figure out what them
 </ul>
 
 = I can't get into my admin panel. How do I fix it? =
+Since it is possible to lock yourself out of the dasboard, WordPress HTTPS comes with a way to reset the plugin's settings. The plugin makes no permanent changes to WordPress, so this will restore all settings to their defaults. Follow directions under "How do I reset the plugin's settings?"
+
+= How do I reset the plugin's settings? =
 Go to /wp-content/plugins/wordpress-https/wordpress-https.php and uncomment (remove the two forward slashes before) the line below, or go to your wp-config.php file and add this line. Hit any page on your site, and then remove it or comment it out again.
 `define('WPHTTPS_RESET', true);`
+
+= The settings won't save! =
+Did you reset the plugin following the steps above and forget to comment the line back out or remove it from wp-config.php?
 
 = How do I make my whole website secure? =
 To make your entire website secure, you simply need to change your site url to use HTTPS instead of HTTP. Please read <a href="http://codex.wordpress.org/Changing_The_Site_URL" target="_blank">how to change the site url</a>.
@@ -80,6 +95,23 @@ add_filter('force_ssl', 'store_force_ssl', 10, 3);`
 2. Force SSL checkbox added to add/edit posts screen
 
 == Changelog ==
+= 3.3.6 =
+* Fixed bug where admin links in multisite networks were being broken.
+* Added check for Jigoshop admin-ajax.php calls.
+= 3.3.5 =
+* Enhanced multisite support and testing.
+* Slightly adjusted settings page column widths.
+* Now using admin-ajax.php for settings page.
+* Added detection and conflict fixes for a few popular E-commerce plugins: WooCommerce, WP E-commerce and Jigoshop
+* Bug Fix - Password protected pages in WordPress 3.5+ should now be properly secured.
+* Bug Fix - The SSL Admin setting should now be properly retained when using FORCE_SSL_ADMIN.
+* Bug Fix - Links to the home page should now properly be set to HTTP when using Force SSL Exclusively.
+* Bug Fix - Installations with a non-default wp-content folder location should no longer experience issues with the WordPress HTTPS settings page.
+= 3.3.0 =
+* Tested with WordPress v3.5.
+* Added German translation and gettext support. Thanks <a href="https://github.com/cfoellmann">Christian Foellmann</a>.
+* Large sites using the default SSL Host (matching the Site URL) should experience a significant performance increase.
+* Added the Access-Control-Allow-Origin header to AJAX calls to allow local HTTP pages make HTTPS AJAX calls.
 = 3.2.3 =
 * Bug Fix - Sites prevented from logging into the admin panel after the previous release should now be working again.
 * Bug Fix - Fixed bug in Parser where links and forms could be written incorrectly.

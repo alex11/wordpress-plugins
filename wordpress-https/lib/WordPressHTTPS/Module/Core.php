@@ -31,7 +31,6 @@ class WordPressHTTPS_Module_Core extends Mvied_Plugin_Module {
 		add_filter('logout_url', array(&$this, 'secure_url'), 10);
 		add_filter('login_url', array(&$this, 'secure_url'), 10);
 		add_filter('network_admin_url', array(&$this, 'secure_url'), 10);
-		add_filter('admin_url', array(&$this, 'secure_url'), 10);
 
 		// Filter Element URL's
 		add_filter('get_avatar', array(&$this, 'element_url'), 10);
@@ -41,8 +40,13 @@ class WordPressHTTPS_Module_Core extends Mvied_Plugin_Module {
 		add_filter('plugins_url', array(&$this, 'element_url'), 10);
 		add_filter('includes_url', array(&$this, 'element_url'), 10);
 
-		// Filter site_url
-		add_filter('site_url', array(&$this, 'site_url'), 10, 4);
+		// Filter admin_url in admin
+		if ( is_admin() ) {
+			add_filter('admin_url', array(&$this, 'admin_url'), 10, 2);
+		// Filter site_url publicly
+		} else {
+			add_filter('site_url', array(&$this, 'site_url'), 10, 4);
+		}
 
 		// Filter force_ssl
 		add_filter('force_ssl', array(&$this, 'secure_wordpress_forms'), 20, 3);
@@ -61,6 +65,9 @@ class WordPressHTTPS_Module_Core extends Mvied_Plugin_Module {
 
 		// Run install when new blog is created
 		add_action('wpmu_new_blog', array($this->getPlugin(), 'install'), 10, 0);
+
+		// Set response headers
+		add_action($this->getPlugin()->getSlug() . '_init', array(&$this, 'set_headers'), 9, 1);
 
 		if ( $this->getPlugin()->getSetting('ssl_host_diff') ) {
 			// Remove SSL Host authentication cookies on logout
@@ -170,6 +177,30 @@ class WordPressHTTPS_Module_Core extends Mvied_Plugin_Module {
 	}
 
 	/**
+	 * Admin URL
+	 * WordPress Filter - admin_url
+	 *
+	 * @param string $url
+	 * @param string $scheme
+	 * @return string $url
+	 */
+	public function admin_url( $url, $scheme ) {
+		$force_ssl = apply_filters('force_ssl', null, 0, $url);
+
+		// Catches base URL's used by low-level WordPress code
+		if ( is_null($force_ssl) && is_admin() && $this->getPlugin()->isSsl() && ($url_parts = parse_url($url)) && ( !isset($url_parts['path']) || trim($url_parts['path'], '/') == '' ) ) {
+			$force_ssl = true;
+		}
+
+		if ( $scheme != 'http' && $force_ssl ) {
+			$url = $this->getPlugin()->makeUrlHttps($url);
+		} else if ( !is_null($force_ssl) && !$force_ssl ) {
+			$url = $this->getPlugin()->makeUrlHttp($url);
+		}
+		return $url;
+	}
+
+	/**
 	 * Site URL
 	 * WordPress Filter - site_url
 	 *
@@ -181,6 +212,7 @@ class WordPressHTTPS_Module_Core extends Mvied_Plugin_Module {
 	 */
 	public function site_url( $url, $path, $scheme, $blog_id ) {
 		$force_ssl = apply_filters('force_ssl', null, 0, $url);
+
 		if ( $scheme != 'http' && $force_ssl ) {
 			$url = $this->getPlugin()->makeUrlHttps($url);
 		} else if ( !is_null($force_ssl) && !$force_ssl ) {
@@ -230,10 +262,7 @@ class WordPressHTTPS_Module_Core extends Mvied_Plugin_Module {
 				}
 			}
 		}
-		// Catches base URL's used by low-level WordPress code
-		if ( is_admin() && $this->getPlugin()->isSsl() && ($url_parts = parse_url($url)) && ( !isset($url_parts['path']) || trim($url_parts['path'], '/') == '' ) ) {
-			$force_ssl = true;
-		}
+
 		return $force_ssl;
 	}
 
@@ -342,7 +371,7 @@ class WordPressHTTPS_Module_Core extends Mvied_Plugin_Module {
 	 * @return boolean $force_ssl
 	 */
 	public function secure_wordpress_forms( $force_ssl, $post_id = 0, $url = '' ) {
-		if ( $this->getPlugin()->isSsl() && $this->getPlugin()->isUrlLocal($url) && ( strpos($url, 'wp-pass.php') !== false || strpos($url, 'wp-comments-post.php') !== false ) ) {
+		if ( $this->getPlugin()->isSsl() && $this->getPlugin()->isUrlLocal($url) && ( strpos($url, 'wp-pass.php') !== false || strpos($url, 'wp-login.php?action=') !== false || strpos($url, 'wp-comments-post.php') !== false ) ) {
 			$force_ssl = true;
 		}
 		return $force_ssl;
@@ -474,6 +503,18 @@ class WordPressHTTPS_Module_Core extends Mvied_Plugin_Module {
 
 		if ( isset($scheme) ) {
 			$this->getPlugin()->redirect($scheme);
+		}
+	}
+
+	/**
+	 * Add Access-Control-Allow-Origin header to AJAX calls
+	 * 
+	 * @param none
+	 * @return void
+	 */
+	public function set_headers() {
+		if ( !headers_sent() && isset($_SERVER['HTTP_X_REQUESTED_WITH']) && strtolower($_SERVER['HTTP_X_REQUESTED_WITH']) === 'xmlhttprequest' ) {
+			header("Access-Control-Allow-Origin: " . $this->getPlugin()->getHttpsUrl());
 		}
 	}
 
