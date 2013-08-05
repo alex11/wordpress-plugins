@@ -62,7 +62,7 @@ To hide the feed title you can use the feed_items parameter to specify which fee
 
 The verysimple feed is used as the default value if no URL is provided, or WordPress can't read the URL parameter due to either a syntax error in the shortcode, or a special character in the feed url.  Here are some known causes:
 
-* Using curly quotes instead of straight quotes (ie Ó vs  ")  See http://en.wikipedia.org/wiki/Quotation_mark_glyphs
+* Using curly quotes instead of straight quotes (ie ï¿½ vs  ")  See http://en.wikipedia.org/wiki/Quotation_mark_glyphs
 * Certain special characters in the feed url must be url encoded.  Here are some known characters and their replacement:  "=%22 [=%5B  ]=%5D  (see http://www.w3schools.com/tags/ref_urlencode.asp)
 * Copy/pasting the URL into the shortcode will sometimes create HTML instead of plain text.  Use the WordPress editor's HTML View to view the raw HTML source code of your post and make sure the URL parameter is plain text and not HTML code
 
@@ -99,10 +99,17 @@ Documentation is available on the plugin homepage at http://wordpress.org/tags/h
 
 == Upgrade Notice ==
 
-= 1.6.0 =
-* supress notice on systems when rss feed has no source
+= 1.6.2 =
+* attempt to create cache directory if it doesn't exist
 
 == Changelog ==
+
+= 1.6.2 =
+* attempt to create cache directory if it doesn't exist
+
+= 1.6.1 =
+* better error reporting when cache directory doens't exist
+* added codes to pass brackets or quotes in a short code #91; #93; and #34;
 
 = 1.6.0 =
 * supress notice on systems when rss feed has no source

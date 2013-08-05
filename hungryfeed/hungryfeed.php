@@ -3,13 +3,13 @@
 Plugin Name: HungryFEED
 Plugin URI: http://verysimple.com/products/hungryfeed/
 Description: HungryFEED displays RSS feeds on a page or post using Shortcodes.	Respect!
-Version: 1.6.0
+Version: 1.6.2
 Author: VerySimple
 Author URI: http://verysimple.com/
 License: GPL2
 */
 
-define('HUNGRYFEED_VERSION','1.6.0');
+define('HUNGRYFEED_VERSION','1.6.2');
 define('HUNGRYFEED_DEFAULT_CACHE_DURATION',3600);
 define('HUNGRYFEED_DEFAULT_CSS',"h3.hungryfeed_feed_title {}\np.hungryfeed_feed_description {}\ndiv.hungryfeed_items {}\ndiv.hungryfeed_item {margin-bottom: 10px;}\ndiv.hungryfeed_item_title {font-weight: bold;}\ndiv.hungryfeed_item_description {}\ndiv.hungryfeed_item_author {}\ndiv.hungryfeed_item_date {}");
 define('HUNGRYFEED_DEFAULT_JS',"<script type=\"text/javascript\">\n// Custom Javascript here...\n</script>");
@@ -102,6 +102,12 @@ function hungryfeed_display_rss($params)
 {
 	// if simplepie isn't installed then we can't continue
 	if (!hungryfeed_include_simplepie()) return "";
+	
+	// allow params to pass-through brackets or quotes
+	foreach ($params as $key => $val)
+	{
+		$params[$key] = str_replace(array("#91;","&#93;","#34;"), array("[","]","\""), $val);
+	}
 
 	// read in all the possible shortcode parameters
 	$url = hungryfeed_val($params,'url','http://verysimple.com/feed/');
@@ -124,7 +130,6 @@ function hungryfeed_display_rss($params)
 	$feed_fields = explode(",", hungryfeed_val($params,'feed_fields',HUNGRYFEED_DEFAULT_FEED_FIELDS));
 	$item_fields = explode(",", hungryfeed_val($params,'item_fields',HUNGRYFEED_DEFAULT_ITEM_FIELDS));
 	$link_item_title = hungryfeed_val($params,'link_item_title',HUNGRYFEED_DEFAULT_LINK_ITEM_TITLE);
-
 
 	// fix weirdness in the url due to the wordpress visual editor
 	if ($decode_url) $url = html_entity_decode($url);
@@ -149,9 +154,34 @@ function hungryfeed_display_rss($params)
 	$cache_duration = get_option('hungryfeed_cache_duration',HUNGRYFEED_DEFAULT_CACHE_DURATION);
 	if ($cache_duration)
 	{
+		// cache path often does not exist so attempt to create it if possible before exiting
+		
+		if (!file_exists(HUNGRYFEED_DEFAULT_CACHE_LOCATION))
+		{
+			// WP_CONTENT_URL  WP_CONTENT_DIR <-- these might be useful at some point...
+			if (!@mkdir(HUNGRYFEED_DEFAULT_CACHE_LOCATION,0777,true)) 
+			{
+				return hungryfeed_fatal("I wasn't able to create the cache directory.  Please create a new directory at "
+						. HUNGRYFEED_DEFAULT_CACHE_LOCATION
+						. " and make sure it is writable by the web server account.  "
+						. "If this is not possible you can disable caching in HungryFEED settings (however this is not recommended).");
+				
+			}
+		}
+		
+		if (!is_writable(HUNGRYFEED_DEFAULT_CACHE_LOCATION))
+		{
+			return hungryfeed_fatal("The cache directory at "
+					. HUNGRYFEED_DEFAULT_CACHE_LOCATION
+					. " is not writable.  Please change permissions to allow write permission to the web server account."
+					. "  If this is not possible you can disable caching in HungryFEED settings (however this is not recommended).");
+		}
+
+		// permissions appear to be ok, proceed
 		$feed->enable_cache(true);
 		$feed->set_cache_duration($cache_duration);
 		$feed->set_cache_location(HUNGRYFEED_DEFAULT_CACHE_LOCATION);
+		
 	}
 	else
 	{
