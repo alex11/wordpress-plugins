@@ -10,223 +10,134 @@ if (!defined('URE_PLUGIN_URL')) {
   die;  // Silence is golden, direct call is prohibited
 }
 
-if (!isset($ure_currentRole) || !$ure_currentRole) {
-  if (isset($_REQUEST['user_role']) && $_REQUEST['user_role']) {
-    $ure_currentRole = $_REQUEST['user_role'];
-  } else if (count($ure_userToEdit->roles)>0) {
-    // just take the 1st element of array, as it could start from index not equal to 0
-    foreach ($ure_userToEdit->roles as $role) {
-      $ure_currentRole = $role;
-      break;
-    }
-  } else {
-   $ure_currentRole = '';
-  }
-}
-
-
-$roleSelectHTML = '<select id="user_role" name="user_role" onchange="ure_Actions(\'role-change\', this.value);">';
-foreach ($ure_roles as $key=>$value) {
-  if ($key!='administrator') {
-    $selected = ure_optionSelected($key, $ure_currentRole);
-    $roleSelectHTML .= '<option value="'.$key.'" '.$selected.'>'.__($value['name'], 'ure').'</option>';
-  }
-}
-if ($ure_currentRole==-1) {
-  $selected = 'selected="selected"';
-} else {
-  $selected = '';
-}
-$roleSelectHTML .= '<option value="-1" '.$selected.' >&mdash; No role for this site &mdash;</option>';
-$roleSelectHTML .= '</select>';
-
-
 ?>
 
 <div class="has-sidebar-content">
-<script language="javascript" type="text/javascript">
-  function ure_Actions(action, value) {
-    var url = '<?php echo URE_WP_ADMIN_URL.'/'.URE_PARENT; ?>?page=user-role-editor.php&object=user&user_id=<?php echo $ure_userToEdit->ID; ?>';
-    if (action=='cancel') {
-      document.location = url;
-      return true;
-    } if (action!='update') {
-      url += '&action='+ action;
-      if (value!='' && value!=undefined) {
-        url = url +'&user_role='+ escape(value);
-      }
-      document.location = url;
-    } else {
-      document.getElementById('ure-form').submit();
-    }
-    
-  }// end of ure_Actions()
-
-
-  function ure_onSubmit() {
-    if (!confirm('<?php echo sprintf(__('User "%s" update: please confirm to continue', 'ure'), $ure_userToEdit->display_name); ?>')) {
-      return false;
-    }
-  }
-
-</script>
 <?php
-  $userInfo = ' <span style="font-weight: bold;">'.$ure_userToEdit->user_login; 
-  if ($ure_userToEdit->display_name!==$ure_userToEdit->user_login) {
-    $userInfo .= ' ('.$ure_userToEdit->display_name.')';
+	if (!is_multisite() || current_user_can('manage_network_users')) {
+		$anchor_start = '<a href="' . wp_nonce_url("user-edit.php?user_id={$this->user_to_edit->ID}", 
+          "ure_user_{$this->user_to_edit->ID}") .'" >';
+		$anchor_end = '</a>';
+	} else {
+		$anchor_start = '';
+		$anchor_end = '';
+	}
+  $user_info = ' <span style="font-weight: bold;">'.$anchor_start. $this->user_to_edit->user_login; 
+  if ($this->user_to_edit->display_name!==$this->user_to_edit->user_login) {
+    $user_info .= ' ('.$this->user_to_edit->display_name.')';
   }
-  $userInfo .= '</span>';
-	ure_displayBoxStart(__('Change capabilities for user', 'ure').$userInfo);
+  $user_info .= $anchor_end.'</span>';
+	 $this->display_box_start(__('Change capabilities for user', 'ure').$user_info, 'min-width:810px;');
  
 ?>
-  <div style="float: left;"><?php echo __('Role:', 'ure').' '.$roleSelectHTML; ?></div>
+<table cellpadding="0" cellspacing="0">
+	<tr>
+		<td>&nbsp;</td>		
+		<td style="padding-left: 10px; padding-bottom: 5px;">
   <?php
-  if ($ure_caps_readable) {
+  if ($this->caps_readable) {
     $checked = 'checked="checked"';
   } else {
     $checked = '';
   }
 ?>
-  <div style="display:inline;float: right;"><input type="checkbox" name="ure_caps_readable" id="ure_caps_readable" value="1" <?php echo $checked; ?> onclick="ure_Actions('capsreadable');"/>
-    <label for="ure_caps_readable"><?php _e('Show capabilities in human readable form', 'ure'); ?></label><br/>
+  
+		<input type="checkbox" name="ure_caps_readable" id="ure_caps_readable" value="1" 
+      <?php echo $checked; ?> onclick="ure_turn_caps_readable(<?php echo $this->user_to_edit->ID; ?>);"  />
+    <label for="ure_caps_readable"><?php _e('Show capabilities in human readable form', 'ure'); ?></label>&nbsp;&nbsp;&nbsp;
 <?php
-    if ($ure_show_deprecated_caps) {
+    if ($this->show_deprecated_caps) {
       $checked = 'checked="checked"';
     } else {
       $checked = '';
     }
 ?>
-                <input type="checkbox" name="ure_show_deprecated_caps" id="ure_show_deprecated_caps" value="1" <?php echo $checked; ?> onclick="ure_Actions('showdeprecatedcaps');"/>
-                <label for="ure_show_deprecated_caps"><?php _e('Show deprecated capabilities', 'ure'); ?></label>    
-  </div>
-
-  <br/><br/><hr/>  
-  <h3><?php _e('Add capabilities to this user:', 'ure'); ?></h3>
-	<?php _e('Core capabilities:', 'ure'); ?>
+    <input type="checkbox" name="ure_show_deprecated_caps" id="ure_show_deprecated_caps" value="1" 
+        <?php echo $checked; ?> onclick="ure_turn_deprecated_caps(<?php echo $this->user_to_edit->ID; ?>);"/>
+    <label for="ure_show_deprecated_caps"><?php _e('Show deprecated capabilities', 'ure'); ?></label>      
+		</td>
+	</tr>	
+	<tr>
+		<td class="ure-user-roles">
+			<div style="margin-bottom: 5px; font-weight: bold;"><?php echo __('Primary Role:', 'ure'); ?></div>
+<?php 
+$values = array_values($this->user_to_edit->roles);
+$primary_role = array_shift($values);  // get 1st element from roles array
+if (!empty($primary_role) && isset($this->roles[$primary_role])) {
+	echo $this->roles[$primary_role]['name']; 
+} else {
+	echo 'None';
+}
+if (function_exists('bbp_filter_blog_editable_roles') ) {  // bbPress plugin is active
+?>	
+	<div style="margin-top: 5px;margin-bottom: 5px; font-weight: bold;"><?php echo __('bbPress Role:', 'ure'); ?></div>
+<?php
+	// Get the roles
+	$dynamic_roles = bbp_get_dynamic_roles();
+	$bbp_user_role = bbp_get_user_role($this->user_to_edit->ID);
+	if (!empty($bbp_user_role)) {
+		echo $dynamic_roles[$bbp_user_role]['name']; 
+	}
+}
+?>
+			<div style="margin-top: 5px;margin-bottom: 5px; font-weight: bold;"><?php echo __('Other Roles:', 'ure'); ?></div>
+<?php
+ $show_admin_role = $this->get_option('show_admin_role', 0);
+	$you_are_admin = ((defined('URE_SHOW_ADMIN_ROLE') && URE_SHOW_ADMIN_ROLE==1) || $show_admin_role==1) && $this->user_is_admin();
+	foreach ($this->roles as $role_id => $role) {
+		if ( ($you_are_admin || $role_id!='administrator') && ($role_id!==$primary_role) ) {			
+			if ( user_can( $this->user_to_edit->ID, $role_id ) ) {
+				$checked = 'checked="checked"';
+			} else {
+				$checked = '';
+			}
+			echo '<label for="wp_role_' . $role_id .'"><input type="checkbox"	id="wp_role_' . $role_id . 
+        '" name="wp_role_' . $role_id . '" value="' . $role_id . '"' . $checked .' />&nbsp;' . 
+        __($role['name'], 'ure') . '</label><br />';
+		}		
+	}
+?>
+		</td>
+		<td style="padding-left: 5px; padding-top: 5px; border-top: 1px solid #ccc;">  
+	<span style="font-weight: bold;"><?php _e('Core capabilities:', 'ure'); ?></span>		
+	<div style="display:table-inline; float: right; margin-right: 12px;">
+		<?php _e('Quick filter:', 'ure'); ?>&nbsp;
+		<input type="text" id="quick_filter" name="quick_filter" value="" size="20" onkeyup="ure_filter_capabilities(this.value);" />
+	</div>		
+	
   <table class="form-table" style="clear:none;" cellpadding="0" cellspacing="0">
     <tr>
       <td style="vertical-align:top;">
-<?php
-  $deprecatedCaps = ure_get_deprecated_caps();
-	$quant = count($built_in_wp_caps);
-	$quantInColumn = 22;
-	$printed_quant = 0;
-	foreach ( $ure_fullCapabilities as $capability ) {
-		if ( !$capability['wp_core'] ) { // show WP built-in capabilities 1st
-			continue;
-		}
-		if (!$ure_show_deprecated_caps && isset($deprecatedCaps[$capability['inner']])) {
-			$input_type = 'hidden';
-		} else {
-			$input_type = 'checkbox';
-		}
-		if (isset($deprecatedCaps[$capability['inner']])) {
-			$labelStyle = 'style="color:#BBBBBB;"';
-		} else {
-			$labelStyle = '';
-		}
-		$checked = '';
-		$disabled = '';
-		if (isset($ure_roles[$ure_currentRole]['capabilities'][$capability['inner']])) {
-			$checked = 'checked="checked"';
-			$disabled = 'disabled="disabled"';
-		} else if (isset($ure_userToEdit->caps[$capability['inner']])) {
-			$checked = 'checked="checked"';
-		}
-		$cap_id = str_replace(' ', URE_SPACE_REPLACER, $capability['inner']);
-		?>
-		          <input type="<?php echo $input_type; ?>" name="<?php echo $cap_id; ?>" id="<?php echo $cap_id; ?>" value="<?php echo $capability['inner']; ?>" <?php echo $checked; ?> <?php echo $disabled; ?>/>
-		<?php
-		if ($input_type == 'checkbox') {
-			if ($ure_caps_readable) {
-				$capInd = 'human';
-				$capIndAlt = 'inner';
-			} else {
-				$capInd = 'inner';
-				$capIndAlt = 'human';
-			}
-			?>
-				          <label for="<?php echo $cap_id; ?>" title="<?php echo $capability[$capIndAlt]; ?>" <?php echo $labelStyle; ?> ><?php echo $capability[$capInd]; ?></label> <?php echo ure_capability_help_link($capability['inner']); ?><br/>
-			<?php
-			$printed_quant++;
-		}
-		if ( $printed_quant >= $quantInColumn ) {
-			$printed_quant = 0;
-			echo '</td>
-           <td style="vertical-align:top;">';
-		}
-	}
-	?>
+				<?php $this->show_capabilities( true, false ); ?>
       </td>
+			<td>
+				<?php $this->toolbar();?>
+			</td>
     </tr>
   </table>
-  <hr/>
 <?php 
-	$quant = count($ure_fullCapabilities) - $quant;
-	if ($quant>0) {
-		_e('Custom capabilities:', 'ure'); 
-?>
+	$quant = count( $this->full_capabilities ) - count( $this->get_built_in_wp_caps() );
+	if ($quant>0) {		
+     echo '<hr />';
+?> 
+	<span style="font-weight: bold;"><?php _e('Custom capabilities:', 'ure'); ?></span> 
   <table class="form-table" style="clear:none;" cellpadding="0" cellspacing="0">
     <tr>
       <td style="vertical-align:top;">
-<?php
-        
-        $quantInColumn = (int) $quant / 3;
-        $printed_quant = 0;				
-        foreach ($ure_fullCapabilities as $capability) {
-					if ( $capability['wp_core'] ) {  // show plugins or user added capabilities
-						continue;
-					}
-          $checked = ''; $disabled = '';
-          if (isset($ure_roles[$ure_currentRole]['capabilities'][$capability['inner']])) {
-            $checked = 'checked="checked"';
-            $disabled = 'disabled="disabled"';
-          } else if (isset($ure_userToEdit->caps[$capability['inner']])) {
-            $checked = 'checked="checked"';
-          }
-          $cap_id = str_replace(' ', URE_SPACE_REPLACER, $capability['inner']);
-?>
-          <input type="checkbox" name="<?php echo $cap_id; ?>" id="<?php echo $cap_id; ?>" value="<?php echo $capability['inner']; ?>" <?php echo $checked; ?> <?php echo $disabled; ?>/>
-<?php
-        if ($input_type=='checkbox') {
-          if ($ure_caps_readable) {
-            $capInd = 'human';
-            $capIndAlt = 'inner';
-          } else {
-            $capInd = 'inner';
-            $capIndAlt = 'human';
-          }
-        ?>
-          <label for="<?php echo $cap_id; ?>" title="<?php echo $capability[$capIndAlt]; ?>" ><?php echo $capability[$capInd]; ?></label> <?php echo ure_capability_help_link($capability['inner']); ?><br/>
-<?php            
-          $printed_quant++;
-        }
-          if ( $printed_quant >= $quantInColumn ) {
-            $printed_quant = 0;
-            echo '</td>
-           <td style="vertical-align:top;">';
-          }
-        }
-        ?>
+				<?php $this->show_capabilities( false, false ); ?>
       </td>
     </tr>
   </table>	
-	<hr/>
 <?php
 	}  // if ($quant>0)
 ?>
+		</td>
+	</tr>
+</table>
   <input type="hidden" name="object" value="user" />
-  <input type="hidden" name="user_id" value="<?php echo $ure_userToEdit->ID; ?>" />
-  <div class="submit" style="padding-top: 0px;">
-    <div style="float:left; padding-bottom: 10px;">
-        <input type="submit" name="submit" value="<?php _e('Update', 'ure'); ?>" title="<?php _e('Save Changes', 'ure'); ?>" />
-        <input type="button" name="cancel" value="<?php _e('Cancel', 'ure') ?>" title="<?php _e('Cancel not saved changes','ure');?>" onclick="ure_Actions('cancel');"/>
-    </div>
-  </div>
-
+  <input type="hidden" name="user_id" value="<?php echo $this->user_to_edit->ID; ?>" />
 <?php
-  ure_displayBoxEnd();
+  $this->display_box_end();
 ?>
   
 </div>
-
