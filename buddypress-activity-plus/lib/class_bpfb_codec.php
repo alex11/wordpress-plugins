@@ -48,6 +48,7 @@ class BpfbCodec {
 	 */
 	function create_video_tag ($url) {
 		if (!$url) return '';
+		$url = preg_match('/^https?:\/\//i', $url) ? $url : BPFB_PROTOCOL . $url;
 		return "[bpfb_video]{$url}[/bpfb_video]";
 	}
 

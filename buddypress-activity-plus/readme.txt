@@ -2,10 +2,10 @@
 Contributors: WPMUDEV
 Tags: BuddyPress, activity, embed, media, youtube, photos, facebook
 Requires at least: 3.1
-Tested up to: 3.3.2
-Stable tag: 1.4.1
+Tested up to: 3.5.1
+Stable tag: 1.5
 
-BuddyPress Embed Activity allows for embedding of oEmbed videos and 
+BuddyPress Activity Plus allows for embedding of oEmbed videos and media in your activities.
 
 == Description ==
 
@@ -35,7 +35,7 @@ Here's the quick overview of this plugin's features:
 No. This plugin is offered as is at no charge.
 
 = How do I get support? =
-We provide comprehensive and guaranteed support on the <a href='http://premium.wpmudev.org/forums/tags/marketpress-wordpress-ecommerce'>WPMU DEV forums</a> and <a href='http://premium.wpmudev.org/live-support/'>live chat</a> only.
+We provide comprehensive and guaranteed support on the <a href='http://premium.wpmudev.org/forums/tags/buddypress-activity-plus'>WPMU DEV forums</a> and <a href='http://premium.wpmudev.org/live-support/'>live chat</a> only.
 
 == Screenshots ==
 
@@ -45,6 +45,12 @@ We provide comprehensive and guaranteed support on the <a href='http://premium.w
 4. Video in your activity stream
 
 == Changelog ==
+
+= 1.5 =
+- Trimming images for auto-innjected breaks.
+- Link type hrefs target assigned for external and all keywords.
+- Refactoring the deprecated resizing mehtod.
+- Fixing BuddyPress theme compat layer updates.
 
 = 1.4.1 =
 - Fix for shortcodes appearing in activity RSS feeds.

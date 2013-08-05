@@ -57,7 +57,16 @@ class BpfbBinder {
 			$tmp_img = realpath(BPFB_TEMP_IMAGE_DIR . $img);
 			$new_img = BPFB_BASE_IMAGE_DIR . "{$pfx}_{$img}";
 			if (@rename($tmp_img, $new_img)) {
-				image_resize($new_img, $thumb_w, $thumb_h, false, 'bpfbt');
+				if (function_exists('wp_get_image_editor')) { // New way of resizing the image
+					$image = wp_get_image_editor($new_img);
+					if (!is_wp_error($image)) {
+						$thumb_filename  = $image->generate_filename('bpfbt');
+						$image->resize($thumb_w, $thumb_h, false);
+						$image->save($thumb_filename);
+					}
+				} else { // Old school fallback
+					image_resize($new_img, $thumb_w, $thumb_h, false, 'bpfbt');
+				}
 				$ret[] = pathinfo($new_img, PATHINFO_BASENAME);
 			}
 			else return false;
@@ -147,6 +156,7 @@ class BpfbBinder {
 	 */
 	function ajax_preview_video () {
 		$url = $_POST['data'];
+		$url = preg_match('/^https?:\/\//i', $url) ? $url : BPFB_PROTOCOL . $url;
 		$warning = __('There has been an error processing your request', 'bpfb');
 		$response = $url ? __('Processing...', 'bpfb') : $warning;
 		$ret = wp_oembed_get($url);
@@ -284,7 +294,8 @@ class BpfbBinder {
 			if ( bp_has_activities ( 'include=' . $aid ) ) {
 				while ( bp_activities() ) {
 					bp_the_activity();
-					locate_template( array( 'activity/entry.php' ), true );
+					if (function_exists('bp_locate_template')) bp_locate_template( array( 'activity/entry.php' ), true );
+					else locate_template( array( 'activity/entry.php' ), true );
 				}
 			}
 			$activity = ob_get_clean();

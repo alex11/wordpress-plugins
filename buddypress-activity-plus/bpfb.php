@@ -2,8 +2,8 @@
 /*
 Plugin Name: BuddyPress Activity Plus
 Plugin URI: http://premium.wpmudev.org/project/media-embeds-for-buddypress-activity
-Description: VORSICHT BEI: images_tag_template.php!!! A Facebook-style media sharing improvement for the activity box.
-Version: 1.4.1
+Description: A Facebook-style media sharing improvement for the activity box.
+Version: 1.5
 Author: Ve Bailovity (Incsub), designed by Brett Sirianni (The Edge)
 Author URI: http://premium.wpmudev.org
 WDP ID: 232
@@ -48,7 +48,7 @@ if (is_multisite() && defined('WPMU_PLUGIN_URL') && defined('WPMU_PLUGIN_DIR') &
 } else {
 	// No textdomain is loaded because we can't determine the plugin location.
 	// No point in trying to add textdomain to string and/or localizing it.
-	wp_die(__('There was an issue determining where Google Maps plugin is installed. Please reinstall.'));
+	wp_die(__('There was an issue determining where BuddyPress Activity Plus plugin is installed. Please reinstall.'));
 }
 $textdomain_handler('bpfb', false, BPFB_PLUGIN_SELF_DIRNAME . '/languages/');
 
@@ -58,6 +58,9 @@ if (!defined('BPFB_OEMBED_WIDTH')) define('BPFB_OEMBED_WIDTH', 450, true);
 // Override image limit in wp-config.php
 if (!defined('BPFB_IMAGE_LIMIT')) define('BPFB_IMAGE_LIMIT', 5, true);
 
+// Override link target preference in wp-config.php
+if (!defined('BPFB_LINKS_TARGET')) define('BPFB_LINKS_TARGET', false, true);
+
 
 $wp_upload_dir = wp_upload_dir();
 define('BPFB_TEMP_IMAGE_DIR', $wp_upload_dir['basedir'] . '/bpfb/tmp/', true);
@@ -66,11 +69,13 @@ define('BPFB_BASE_IMAGE_DIR', $wp_upload_dir['basedir'] . '/bpfb/', true);
 define('BPFB_BASE_IMAGE_URL', $wp_upload_dir['baseurl'] . '/bpfb/', true);
 
 
+
 // Hook up the installation routine and check if we're really, really set to go
 require_once BPFB_PLUGIN_BASE_DIR . '/lib/class_bpfb_installer.php';
 register_activation_hook(__FILE__, array('BpfbInstaller', 'install'));
 BpfbInstaller::check();
 
+if (file_exists(BPFB_PLUGIN_BASE_DIR . '/lib/external/wpmudev-dash-notification.php')) require_once BPFB_PLUGIN_BASE_DIR . '/lib/external/wpmudev-dash-notification.php';
 
 /**
  * Helper functions for going around the fact that
