@@ -2,9 +2,9 @@
 Contributors: ppfeufer
 Donate link: https://www.paypal.com/cgi-bin/webscr?cmd=_s-xclick&hosted_button_id=DC2AEJD2J66RE
 Tags: twitter, facebook, googleplus, button, flattr, social, privacy, xing, pinterest, t3n, linkedin, twoclick
-Requires at least: 3.0.1
-Tested up to: 3.5
-Stable tag: 1.4.1
+Requires at least: 3.4
+Tested up to: 3.6
+Stable tag: 1.6
 License: GPLv3
 
 Facebook-Like/Empfehlen, Twitter, Flattr, Xing, Pinterest, t3n, LinkedIn und Googleplus dem deutschen Datenschutz entsprechend in WordPress.
@@ -68,6 +68,26 @@ Nutze dafür einfach dein Dashboard
 
 == Changelog ==
 
+= 1.6 =
+* *03. August 2013*
+* CSS Fix: Klassen der Buttons angepasst, so dass es weniger zu Verwirrungen mit anderen Plugins kommen sollte.
+* jQuery fix für jQuery 1.10 (Kommt mit WordPress 3.6).
+* Testlauf für WordPress 3.6.
+
+= 1.5 =
+* *02. Januar 2013*
+* **Fix:** Failover für falsche Linguacodes *(Beispiel: en_EN => en_GB)*
+* **Fix:** CSS - Hintergrundbilder werden nun bei aktivierten buttons nicht mehr angezeigt.
+* **Fix:** CSS - Workaround für die Buttons im Backend eingefügt. (WordPress > 3.5)
+* **Fix:** CSS - Infoboxen werden nur noch angezeigt, wenn man wirklich über dem Dummybutton oder dem Schalter ist.
+* **Fix:** Meldungen zu "undefined index" im aktivierten Debugmodus im Backend behoben.
+* **Fix:** Sämtliches HTML aus den Überschriften herausgefiltert. Es scheint einige zu geben die meinen da muss unbedingt HTML mit rein, was zu Problemem führen kann.
+* **Neu:** Falls der Failover nicht greit, kann die Sprache der Buttons auch in den Einstellungen nun geändert werden. (Zu finden unter "Buttons")
+* **Neu:** HTTPS für externe JavaScripte und Dienste.
+* **Change:** Priorität des Filters `the_content` auf 12 geändert, so dass dieser später abgefeuert wird und sich nicht mit den Standardprios (10) streitet.
+* **Change:** Mindestvoraussetzung auf **WordPress 3.4** geändert. Bei der Überarbeitung des JavaScriptes habe ich einige veraltete Methoden entfernt und durch ihre aktuellen Pendants ersetzt.
+* ** *Bitte nur updaten, wenn ihr mindestens WordPress 3.4 und jQuery 1.7 nutzt!* **
+
 = 1.4.1 =
 * *23. August 2012*
 * **Fix:** Beschreibung zum Deaktivieren des Infobuttons angepasst. Da stand noch die Falsche Beschreibung :-)
@@ -75,7 +95,7 @@ Nutze dafür einfach dein Dashboard
 = 1.4 =
 * *21. August 2012*
 * **Neu:** Infobutton per Option schaltbar *(Standard: aktiviert // Zu finden unter "Sonstiges")*
-* utm_source, utm_medium und utm_term zur Kampagnenverfolgung hinzugefügt für bessere Reichweitenanalysen.
+* **Neu:** utm_source, utm_medium und utm_term zur Kampagnenverfolgung hinzugefügt für bessere Reichweitenanalysen.
 * ** *Bitte nach dem Update die Einstellungen durchgehen und speichern* **
 
 = 1.3 =
@@ -449,8 +469,8 @@ Dies sind die Standardtexte und können nicht gelöscht werden. Sollen andere In
 = Meine Buttons werden nicht richtig angezeigt, bzw. der Facebook-Button ist nur abgeschnitten zu sehen. Was kann ich tun? =
 Gehe in die Einstellungen und speichere diese einfach erneut ab. Mit der Version 1.3 wurden die einzelnen Dummybuttons durch ein CSS-Sprite ersetzt. Dafür wurden Änderungen im HTML notwendig, was eventuell zu solchen Anzeigefehlern führen kann. Es kann auch helfen den Cache zu entleeren, sowohl den eines eventuell verwendeten Cacheplugins, als auch den Browsercache.
 
-= Bei mir werden übergaupt keine Dummybuttons angezeigt, woran kann das liegen? =
-Die Dummybuttons sind ein sogenanntes CSS-Sprite. Das heißt, diese werden über das CSS des Plugins eingebunden. Wenn Du zusätzlich ein Plugin nutzt, welches die CSS-Dateien Deiner Seite zusammenfasst *(combine)* zu einer Einzigen, stimmen natürlich die Pfade zu den Grafiken nicht mehr und somit können diese nicht mehr angezeigt werden. Hier hilft es, die CSS-Datei des Plugins von der Zusammenfassung auszunehmen. Auch das Komprimieren * (minify) * der CSS-Dateien kann Probleme versursachen.
+= Bei mir werden überhaupt keine Dummybuttons angezeigt, woran kann das liegen? =
+Die Dummybuttons sind ein sogenanntes CSS-Sprite. Das heißt, diese werden über das CSS des Plugins eingebunden. Wenn Du zusätzlich ein Plugin nutzt, welches die CSS-Dateien Deiner Seite zusammenfasst *(combine)* zu einer Einzigen, stimmen natürlich die Pfade zu den Grafiken nicht mehr und somit können diese nicht mehr angezeigt werden. Hier hilft es, die CSS-Datei des Plugins von der Zusammenfassung auszunehmen. Auch das Komprimieren * (minify) * der CSS-Dateien kann Probleme verursachen.
 
 = Und wenn ich noch andere Fragen habe? =
 Falls Du noch eine Frage hast, die hier nicht auftaucht dann stell diese unter [http://ppfeufer.de/wordpress-plugin/2-click-social-media-buttons/](http://ppfeufer.de/wordpress-plugin/2-click-social-media-buttons/) in den Kommentaren. Aber bitte schau vorher einmal grob durch die Kommentare, ob es dieses Anliegen schon gab.

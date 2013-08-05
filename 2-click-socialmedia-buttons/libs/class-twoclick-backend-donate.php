@@ -23,7 +23,7 @@ if(!function_exists('add_action')) {
  * @package 2 Click Social Media Buttons
  */
 if(!class_exists('Twoclick_Social_Media_Buttons_Backend_Donate')) {
-	class Twoclick_Social_Media_Buttons_Backend_Donate {
+	class Twoclick_Social_Media_Buttons_Backend_Donate extends Twoclick_Social_Media_Buttons_Backend {
 		private $var_sDonateLinkFlattr = 'http://flattr.com/thing/390240/WordPress-Plugin-2-Click-Social-Media-Buttons;';
 		private $var_sDonateLinkPaypal = 'https://www.paypal.com/cgi-bin/webscr?cmd=_s-xclick&hosted_button_id=DC2AEJD2J66RE';
 
@@ -35,7 +35,9 @@ if(!class_exists('Twoclick_Social_Media_Buttons_Backend_Donate')) {
 		} // END function Twoclick_Social_Media_Buttons_Backend_Donate()
 
 		function __construct() {
-			$this->render_donate_page();
+			if($this->_is_twoclick_settings_page()) {
+				$this->render_donate_page();
+			}
 		} // END function __construct()
 
 		/**
@@ -69,7 +71,7 @@ if(!class_exists('Twoclick_Social_Media_Buttons_Backend_Donate')) {
 			</div>
 			<?php
 		} // END private function render_donate_page()
-	} // END class Twoclick_Social_Media_Buttons_Backend_Donate
+	} // END class Twoclick_Social_Media_Buttons_Backend_Donate extends Twoclick_Social_Media_Buttons_Backend
 
 	new Twoclick_Social_Media_Buttons_Backend_Donate();
 } // END if(!class_exists('Twoclick_Social_Media_Buttons_Backend_Donate'))

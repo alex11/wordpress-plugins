@@ -55,7 +55,7 @@ class Twoclick_Social_Media_Buttons_Pages_Walker extends Walker_Nav_Menu {
 
 		$array_TwoclickSettings = get_option('twoclick_buttons_settings');
 		if(is_array($array_TwoclickSettings)) {
-			if(is_array($array_TwoclickSettings['twoclick_buttons_exclude_page'])) {
+			if(isset($array_TwoclickSettings['twoclick_buttons_exclude_page']) && is_array($array_TwoclickSettings['twoclick_buttons_exclude_page'])) {
 				$array_ExcludePages = $array_TwoclickSettings['twoclick_buttons_exclude_page'];
 			}
 		}
@@ -75,7 +75,7 @@ class Twoclick_Social_Media_Buttons_Pages_Walker extends Walker_Nav_Menu {
 		}
 
 		$var_sChecked = '';
-		if($array_ExcludePages[esc_attr($item->object_id)] == '1') {
+		if(isset($array_ExcludePages[esc_attr($item->object_id)]) && $array_ExcludePages[esc_attr($item->object_id)] == '1') {
 			$var_sChecked = ' checked="checked"';
 		}
 

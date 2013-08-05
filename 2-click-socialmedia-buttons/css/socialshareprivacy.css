@@ -1,43 +1,40 @@
 @charset "UTF-8";
 .social_share_privacy {clear:both; margin:0 auto; width:100%; margin-bottom:15px;}
 .social_share_privacy ul {clear:both; margin:0 !important; padding:0; height:25px; width:100%;}
-.social_share_privacy li {margin:0 !important; padding:0; height:20px; float:left; list-style-type:none !important; list-style:none !important; background:none !important; border:none !important; overflow:visible !important;}
+.social_share_privacy li {margin:0 !important; padding:0; height:20px; float:left; list-style-type:none !important; list-style:none !important; background:none !important; border:none !important; overflow:visible !important; margin:10px 0 !important;}
 .social_share_privacy li:before {content:none;}
+.social_share_privacy li .twoclick-button-container {display:inline-block;}
 .social_share_privacy li .dummy_btn {float:left; margin-left:10px; padding:0;}
 .social_share_privacy li .dummy_btn span.twoclick-network {max-width:none; cursor:pointer;}
 .social_share_privacy li .dummy_btn iframe {max-width:none; border:none;}
+.social_share_privacy li .info_off .dummy_btn {background:none !important;}
+.social_share_privacy li .dummy_btn span.twoclick-network {display:block;}
 
-/* Sprite global
+/* Sprite Fallback (english)
 ----------------------------------------------- */
 .social_share_privacy li .dummy_btn {background:url(../images/sprite.png) no-repeat top left; height:20px;}
-.social_share_privacy.de_DE li .dummy_btn {background:url(../images/sprite-de_DE.png) no-repeat top left; height:20px;}
-.social_share_privacy li.info_off .dummy_btn {background:none;}
-.social_share_privacy li .dummy_btn span.twoclick-network {display:block;}
-/* .social_share_privacy li.info_off .dummy_btn span.twoclick-network {width;100%} */
-
-/* Sprite Fallback
------------------------------------------------ */
-.social_share_privacy li .fb_like {background-position:0 0;}
-.social_share_privacy li .fb_recommend {background-position:0 -25px;}
-.social_share_privacy li .tweet {background-position:0 -175px;}
-.social_share_privacy li .gplusone {background-position:0 -75px;}
-.social_share_privacy li .flattrbtn {background-position:0 -50px;}
-.social_share_privacy li .xingbtn {background-position:0 -200px;}
-.social_share_privacy li .pinterestbtn {background-position:0 -125px;}
-.social_share_privacy li .t3nbtn {background-position:0 -150px;}
-.social_share_privacy li .linkedinbtn {background-position:0 -100px;}
+.social_share_privacy li .fb_like_btn {background-position:0 0;}
+.social_share_privacy li .fb_recommend_btn {background-position:0 -25px;}
+.social_share_privacy li .twitter_btn {background-position:0 -175px;}
+.social_share_privacy li .gplusone_btn {background-position:0 -75px;}
+.social_share_privacy li .flattr_btn {background-position:0 -50px;}
+.social_share_privacy li .xing_btn {background-position:0 -200px;}
+.social_share_privacy li .pinterest_btn {background-position:0 -125px;}
+.social_share_privacy li .t3n_btn {background-position:0 -150px;}
+.social_share_privacy li .linkedin_btn {background-position:0 -100px;}
 
 /* Sprite de_DE
 ----------------------------------------------- */
-.social_share_privacy.de_DE li .fb_like {background-position:0 0;}
-.social_share_privacy.de_DE li .fb_recommend {background-position:0 -25px;}
-.social_share_privacy.de_DE li .tweet {background-position:0 -175px;}
-.social_share_privacy.de_DE li .gplusone {background-position:0 -75px;}
-.social_share_privacy.de_DE li .flattrbtn {background-position:0 -50px;}
-.social_share_privacy.de_DE li .xingbtn {background-position:0 -200px;}
-.social_share_privacy.de_DE li .pinterestbtn {background-position:0 -125px;}
-.social_share_privacy.de_DE li .t3nbtn {background-position:0 -150px;}
-.social_share_privacy.de_DE li .linkedinbtn {background-position:0 -100px;}
+.social_share_privacy.sprite-de_DE li .dummy_btn {background:url(../images/sprite-de_DE.png) no-repeat top left; height:20px;}
+.social_share_privacy.sprite-de_DE li .fb_like_btn {background-position:0 0;}
+.social_share_privacy.sprite-de_DE li .fb_recommend_btn {background-position:0 -25px;}
+.social_share_privacy.sprite-de_DE li .twitter_btn {background-position:0 -175px;}
+.social_share_privacy.sprite-de_DE li .gplusone_btn {background-position:0 -75px;}
+.social_share_privacy.sprite-de_DE li .flattr_btn {background-position:0 -50px;}
+.social_share_privacy.sprite-de_DE li .xing_btn {background-position:0 -200px;}
+.social_share_privacy.sprite-de_DE li .pinterest_btn {background-position:0 -125px;}
+.social_share_privacy.sprite-de_DE li .t3n_btn {background-position:0 -150px;}
+.social_share_privacy.sprite-de_DE li .linkedin_btn {background-position:0 -100px;}
 
 /* Facebook
 ----------------------------------------------- */
@@ -87,12 +84,13 @@
 
 /* Tooltips
 ----------------------------------------------- */
-.social_share_privacy li.help_info {position:relative; padding:0 !important; margin:10px 0 !important;}
-.social_share_privacy li.help_info .info, .social_share_privacy li .help_info.icon .info {display:none; position:absolute; bottom:40px; left:-10px; width:290px; padding:10px 15px; font-size:12px; line-height:16px; border:1px solid #ccc; -moz-border-radius:4px; -webkit-border-radius:4px; border-radius:4px; -moz-box-shadow:0 3px 4px #999; -webkit-box-shadow:0 3px 4px #999; box-shadow:0 3px 4px #999; background-color:#fdfbec; color:#000; z-index:500;}
-.social_share_privacy li .help_info.icon .info {left:-150px; width:350px;}
-.social_share_privacy li.help_info.display .info, .social_share_privacy li .help_info.icon.display .info {display:block;}
-.social_share_privacy li.help_info.info_off.display .info {display:none;}
+.social_share_privacy div.help_info {position:relative; padding:0 !important; margin:10px 0 !important;}
+.social_share_privacy div.help_info .info, .social_share_privacy li .help_info.icon .info {display:none; position:absolute; bottom:40px; /*left:-10px;*/ width:290px; padding:10px 15px; font-size:12px; line-height:16px; border:1px solid #ccc; -moz-border-radius:4px; -webkit-border-radius:4px; border-radius:4px; -moz-box-shadow:0 3px 4px #999; -webkit-box-shadow:0 3px 4px #999; box-shadow:0 3px 4px #999; background-color:#fdfbec; color:#000; z-index:500;}
+.social_share_privacy div.help_info.display .info, .social_share_privacy li .help_info.icon.display .info {display:block;}
+.social_share_privacy div.help_info.info_off.display .info {display:none;}
+
 .social_share_privacy li .help_info.icon {background:#fff url(../images/socialshareprivacy_info.png) no-repeat center center scroll; width:25px; height:20px; position:relative; display:inline-block; vertical-align:top; border:2px solid #e7e3e3; border-right-width:0; -moz-border-radius:5px 0 0 5px; -webkit-border-radius:5px 0 0 5px; border-radius:5px 0 0 5px;}
+.social_share_privacy li.help_info.icon .info {left:-150px; width:350px;}
 .social_share_privacy li.settings_info .settings_info_menu.on .help_info.icon {border-top-width:0; border-left-width:0;}
 .social_share_privacy li.settings_info .settings_info_menu.perma_option_off .help_info.icon {border-right-width:2px; -moz-border-radius:5px; -webkit-border-radius:5px; border-radius:5px;}
 
@@ -129,14 +127,6 @@
 /* Dummybuttons
 ----------------------------------------------- */
 .dummy_btn img {margin:0 !important; padding:0 !important; border:none !important;}
-
-/* entferne overflow:hidden
-	Falls die Infotexte in irgendeiner Art und Weise
-	unschön abgeschnitten werden, hier die
-	verschiedenen Elemente mit overflow:hidden
-	angeben, damit dieses aufgehoben werden kann.
------------------------------------------------ */
-#element {overflow:visible !important;}
 
 /* Introtext
 ----------------------------------------------- */

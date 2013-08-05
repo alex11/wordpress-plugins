@@ -124,7 +124,7 @@ if(!class_exists('Twoclick_Social_Media_Buttons_Frontend')) {
 				add_filter('the_content', array(
 					$this,
 					'_get_buttons'
-				), 8);
+				), 12);
 			} // END if(!is_admin())
 		} // END function __construct()
 
@@ -205,6 +205,11 @@ if(!class_exists('Twoclick_Social_Media_Buttons_Frontend')) {
 		 */
 // 		function _enqueue_footer() {
 // 			echo '<div id="fb-root"></div>';
+// 			global $wp_scripts;
+// 			echo $wp_scripts->registered['jquery']->ver;
+// 			echo '<pre>';
+// 			print_r($wp_scripts);
+// 			echo '</pre>';
 // 		}
 
 		/**
@@ -268,7 +273,7 @@ if(!class_exists('Twoclick_Social_Media_Buttons_Frontend')) {
 			 * @since 1.0
 			 * @author ppfeufer
 			 */
-			$var_sTitle = get_the_title();
+			$var_sTitle = wp_filter_nohtml_kses(get_the_title());
 			$var_sDescription = esc_attr($this->var_sPostExcerpt);
 
 			// Title durch wpSEO
@@ -461,7 +466,7 @@ if(!class_exists('Twoclick_Social_Media_Buttons_Frontend')) {
 				} // END if($this->array_TwoclickButtonsOptions['twoclick_buttons_twitter_tweettext_default_as'] == 'posttitle-blogtitle')
 			} // END if($this->array_TwoclickButtonsOptions['twoclick_buttons_twitter_tweettext'] == 'own')
 
-			return $this->_shorten_tweettext(html_entity_decode($var_sTweettext, ENT_QUOTES, get_bloginfo('charset')));
+			return $this->_shorten_tweettext(html_entity_decode(wp_filter_nohtml_kses($var_sTweettext), ENT_QUOTES, get_bloginfo('charset')));
 		} // END private function _get_tweettext()
 
 		/**
@@ -522,15 +527,15 @@ if(!class_exists('Twoclick_Social_Media_Buttons_Frontend')) {
 
 			switch($this->array_TwoclickButtonsOptions['twoclick_buttons_pinterest_description']) {
 				case 'posttitle-tags':
-					$var_sPinterestDescription = strip_tags(get_the_title(get_the_ID())) . ' ' . strip_tags(get_the_tag_list(' #', ' #', ''));
+					$var_sPinterestDescription = wp_filter_nohtml_kses(get_the_title(get_the_ID())) . ' ' . strip_tags(get_the_tag_list(' #', ' #', ''));
 					break;
 
 				case 'posttitle-excerpt':
-					$var_sPinterestDescription = strip_tags(get_the_title(get_the_ID())) . ' &raquo; ' . $this->_get_post_excerpt(get_the_content(), 70);
+					$var_sPinterestDescription = wp_filter_nohtml_kses(get_the_title(get_the_ID())) . ' &raquo; ' . $this->_get_post_excerpt(get_the_content(), 70);
 					break;
 
 				default:
-					$var_sPinterestDescription = strip_tags(get_the_title(get_the_ID()));
+					$var_sPinterestDescription = wp_filter_nohtml_kses(get_the_title(get_the_ID()));
 					break;
 			} // END switch($this->array_TwoclickButtonsOptions['twoclick_buttons_pinterest_description'])
 
@@ -573,62 +578,44 @@ if(!class_exists('Twoclick_Social_Media_Buttons_Frontend')) {
 
 		/**
 		 * <[ Helper ]>
-		 * Dummybilder bereit stellen.
+		 * Sprache der Facebook-Buttons.
 		 *
-		 * Je nach Sprache des Blogs werden verschiedene Dummybilder bereit gestellt.
-		 * Im Moment stehen Bilder für Deutsch und Englisch zur Verfügung.
-		 * Sollte kein Bild für die jeweilige Sprache gefunden werden, so wird das Bild ohne Sprachcode hergenommen.
+		 * Facebook braucht diese Angleichungen,
+		 * da dort nicht alle Locales untestützt werden.
 		 *
-		 * @since 0.14
-		 * @since 0.32 (modified)
+		 * @since 1.5
 		 * @author ppfeufer
 		 */
-		private function _get_dummy_images($var_sLang = '') {
-			if(empty($var_sLang)) {
-				$var_sLang = get_locale();
-			} // END if(empty($var_sLang))
+		private function _get_locale() {
+			if(isset($this->array_TwoclickButtonsOptions['twoclick_buttons_language'])) {
+				$var_sLocale = $this->array_TwoclickButtonsOptions['twoclick_buttons_language'];
+			} else {
+				$var_sLocale = get_locale();
+			}
 
-			$array_DummyImages = array(
-				'facebook-recommend' => array(
-					'image' => (is_readable(TWOCLICK_PLUGIN_DIR . 'images/facebook-dummy-image-recommend-' . $var_sLang . '.png')) ? plugins_url('/images/facebook-dummy-image-recommend-' . $var_sLang . '.png', dirname(__FILE__)) : plugins_url('/images/facebook-dummy-image-recommend.png', dirname(__FILE__)),
-					'width' => '82'
-				),
-				'facebook-like' => array(
-					'image' => (is_readable(TWOCLICK_PLUGIN_DIR . 'images/facebook-dummy-image-like-' . $var_sLang . '.png')) ? plugins_url('/images/facebook-dummy-image-like-' . $var_sLang . '.png', dirname(__FILE__)) : plugins_url('/images/facebook-dummy-image-like.png', dirname(__FILE__)),
-					'width' => '72'
-				),
-				'twitter' => array(
-					'image' => (is_readable(TWOCLICK_PLUGIN_DIR . 'images/twitter-dummy-image-' . $var_sLang . '.png')) ? plugins_url('/images/twitter-dummy-image-' . $var_sLang . '.png', dirname(__FILE__)) : plugins_url('/images/twitter-dummy-image.png', dirname(__FILE__)),
-					'width' => '62'
-				),
-				'googleplus' => array(
-					'image' => (is_readable(TWOCLICK_PLUGIN_DIR . 'images/googleplus-dummy-image-' . $var_sLang . '.png')) ? plugins_url('/images/googleplus-dummy-image-' . $var_sLang . '.png', dirname(__FILE__)) : plugins_url('/images/googleplus-dummy-image.png', dirname(__FILE__)),
-					'width' => '32'
-				),
-				'flattr' => array(
-					'image' => (is_readable(TWOCLICK_PLUGIN_DIR . 'images/flattr-dummy-image-' . $var_sLang . '.png')) ? plugins_url('/images/flattr-dummy-image-' . $var_sLang . '.png', dirname(__FILE__)) : plugins_url('/images/flattr-dummy-image.png', dirname(__FILE__)),
-					'width' => '54'
-				),
-				'xing' => array(
-					'image' => (is_readable(TWOCLICK_PLUGIN_DIR . 'images/xing-dummy-image-' . $var_sLang . '.png')) ? plugins_url('/images/xing-dummy-image-' . $var_sLang . '.png', dirname(__FILE__)) : plugins_url('/images/xing-dummy-image.png', dirname(__FILE__)),
-					'width' => '55'
-				),
-				'pinterest' => array(
-					'image' => (is_readable(TWOCLICK_PLUGIN_DIR . 'images/pinterest-dummy-image-' . $var_sLang . '.png')) ? plugins_url('/images/pinterest-dummy-image-' . $var_sLang . '.png', dirname(__FILE__)) : plugins_url('/images/pinterest-dummy-image.png', dirname(__FILE__)),
-					'width' => '63'
-				),
-				't3n' => array(
-					'image' => (is_readable(TWOCLICK_PLUGIN_DIR . 'images/t3n-dummy-image-' . $var_sLang . '.png')) ? plugins_url('/images/t3n-dummy-image-' . $var_sLang . '.png', dirname(__FILE__)) : plugins_url('/images/t3n-dummy-image.png', dirname(__FILE__)),
-					'width' => '63'
-				),
-				'linkedin' => array(
-					'image' => (is_readable(TWOCLICK_PLUGIN_DIR . 'images/linkedin-dummy-image-' . $var_sLang . '.png')) ? plugins_url('/images/linkedin-dummy-image-' . $var_sLang . '.png', dirname(__FILE__)) : plugins_url('/images/linkedin-dummy-image.png', dirname(__FILE__)),
-					'width' => '63'
-				)
-			);
+			switch($var_sLocale) {
+				case 'de_DE':		// Deutschland
+				case 'de_AT':		// Österreich
+				case 'de_CH':		// Schweiz
+					$var_sLocaleReturn = 'de_DE';
+					break;
 
-			return $array_DummyImages;
-		} // END private function _get_dummy_images($var_sLang = '')
+				case 'en_US':		// USA
+				case 'en_CA':		// Kanada
+					$var_sLocaleReturn = 'en_US';
+					break;
+
+				case 'en_GB':		// England
+				case 'en_AU':		// Australien
+				case 'en_IE':		// Irland
+				case 'en_ZA':		// Südarfika
+				case 'en_EN':		// England (Failover für falsche locale)
+					$var_sLocaleReturn = 'en_GB';
+					break;
+			} // END switch(get_locale())
+
+			return $var_sLocaleReturn;
+		} // END private function _get_locale()
 
 		/**
 		 * <[ Helper ]>
@@ -706,7 +693,7 @@ if(!class_exists('Twoclick_Social_Media_Buttons_Frontend')) {
 				} // END if(!empty($var_sPostID))
 
 				// Some needed variables
-				$var_sTitle = rawurlencode(get_the_title($var_sPostID));
+				$var_sTitle = rawurlencode(wp_filter_nohtml_kses(get_the_title($var_sPostID)));
 				$var_sTweettext = rawurlencode($this->_get_tweettext());
 				$var_sArticleImage = $this->_get_article_image();
 				$array_ButtonData = array();
@@ -816,15 +803,25 @@ if(!class_exists('Twoclick_Social_Media_Buttons_Frontend')) {
 					$var_sPermalink = get_permalink($var_sPostID);
 				} // END if($this->array_TwoclickButtonsOptions['twoclick_buttons_permalink_with_get'] === true)
 
-				// Dummybilder holen.
-				$array_DummyImages = $this->_get_dummy_images(get_locale());
+				/**
+				 * <[ Failover ]>
+				 * Sprache der Facebook-Buttons.
+				 *
+				 * Facebook braucht diese Angleichungen,
+				 * da dort nicht alle Locales untestützt werden.
+				 *
+				 * @since 1.5
+				 * @author ppfeufer
+				 * @uses _get_locale
+				 */
+				$var_sLocale = $this->_get_locale();
 
 				/**
 				 * Sprache für Xing und Twitter
 				 * Diese nutzen leider keine Lingua-Codes :-(
 				 */
 				$var_sButtonLanguage = 'de';
-				if(get_locale() != 'de_DE') {
+				if($var_sLocale != 'de_DE') {
 					$var_sButtonLanguage = 'en';
 				} // END if(get_locale() != 'de_DE')
 
@@ -842,7 +839,7 @@ if(!class_exists('Twoclick_Social_Media_Buttons_Frontend')) {
 						'txt_info' => apply_filters('twoclick-facebook-infotext', stripslashes(wp_filter_kses($this->array_TwoclickButtonsOptions['twoclick_buttons_infotext_facebook']))),
 						'perma_option' => $var_sShowFacebookPerm,
 						'action' => $this->array_TwoclickButtonsOptions['twoclick_buttons_facebook_action'],
-						'language' => get_locale()
+						'language' => $var_sLocale
 					);
 				} // END if($this->array_TwoclickButtonsOptions['twoclick_buttons_display_facebook'])
 
@@ -973,15 +970,18 @@ if(!class_exists('Twoclick_Social_Media_Buttons_Frontend')) {
 				$array_ButtonData['info_link'] = apply_filters('twoclick-infolink', esc_url($this->array_TwoclickButtonsOptions['twoclick_buttons_infolink']));
 				$array_ButtonData['uri'] = esc_url($var_sPermalink);
 				$array_ButtonData['post_id'] = $var_sPostID;
-				$array_ButtonData['post_title_referrer_track'] = urlencode(get_the_title($var_sPostID));
+				$array_ButtonData['post_title_referrer_track'] = urlencode(wp_filter_nohtml_kses(get_the_title($var_sPostID)));
+
 				if($this->array_TwoclickButtonsOptions['twoclick_buttons_url_tracking'] === true) {
 					$array_ButtonData['concat'] = ($var_bGetOptionsInLink === true) ? '%26' : '%3F';
 				} // END if($this->array_TwoclickButtonsOptions['twoclick_buttons_url_tracking'] === true)
-				$array_ButtonData['display_infobox'] = ($this->array_TwoclickButtonsOptions['twoclick_buttons_display_infobox'] === true) ? on : off;
 
+				$array_ButtonData['display_infobox'] = (isset($this->array_TwoclickButtonsOptions['twoclick_buttons_display_infobox']) && $this->array_TwoclickButtonsOptions['twoclick_buttons_display_infobox'] === true) ? 'on' : 'off';
+
+// 				$var_sJavaScript = '/* <![CDATA[ */' . "\n" . 'jQuery(document).ready(function($){var jQueryVersion = $().jquery;if(jQueryVersion < \'' . TWOCLICK_JQUERY_REQUIERED . '\') {return false; } else {if($(\'.twoclick_social_bookmarks_post_' . $var_sPostID . '\')){$(\'.twoclick_social_bookmarks_post_' . $var_sPostID . '\').socialSharePrivacy(' . json_encode($array_ButtonData) . ');}}});' . "\n" . '/* ]]> */';
 				$var_sJavaScript = '/* <![CDATA[ */' . "\n" . 'jQuery(document).ready(function($){if($(\'.twoclick_social_bookmarks_post_' . $var_sPostID . '\')){$(\'.twoclick_social_bookmarks_post_' . $var_sPostID . '\').socialSharePrivacy(' . json_encode($array_ButtonData) . ');}});' . "\n" . '/* ]]> */';
 
-				return $this->_get_intro() . '<div class="twoclick_social_bookmarks_post_' . $var_sPostID . ' social_share_privacy clearfix ' . $this->_get_plugin_version() . ' ' . get_locale() . '"></div><div class="twoclick-js"><script type="text/javascript">' . $var_sJavaScript . '</script></div>';
+				return $this->_get_intro() . '<div class="twoclick_social_bookmarks_post_' . $var_sPostID . ' social_share_privacy clearfix ' . $this->_get_plugin_version() . ' locale-' . get_locale() . ' sprite-' . $var_sLocale . '"></div><div class="twoclick-js"><script type="text/javascript">' . $var_sJavaScript . '</script></div>';
 			} // END if(!is_admin())
 		} // END function _get_js($var_sPostID = '')
 
@@ -999,63 +999,63 @@ if(!class_exists('Twoclick_Social_Media_Buttons_Frontend')) {
 			/**
 			 * Manual Option
 			 */
-			if($this->array_TwoclickButtonsOptions['twoclick_buttons_where'] == 'template') {
+			if(isset($this->array_TwoclickButtonsOptions['twoclick_buttons_where']) && $this->array_TwoclickButtonsOptions['twoclick_buttons_where'] == 'template') {
 				return $content;
 			} // END if($this->array_TwoclickButtonsOptions['twoclick_buttons_where'] == 'template')
 
 			/**
 			 * Sind wir auf einer CMS-Seite?
 			 */
-			if($this->array_TwoclickButtonsOptions['twoclick_buttons_display_page'] == null && is_page()) {
+			if($this->array_TwoclickButtonsOptions['twoclick_buttons_display_page'] == false && is_page()) {
 				return $content;
 			} // END if($this->array_TwoclickButtonsOptions['twoclick_buttons_display_page'] == null && is_page())
 
 			/**
 			 * Sind wir auf der Startseite?
 			 */
-			if($this->array_TwoclickButtonsOptions['twoclick_buttons_display_index'] == null && is_home()) {
+			if($this->array_TwoclickButtonsOptions['twoclick_buttons_display_index'] == false && is_home()) {
 				return $content;
 			} // END if($this->array_TwoclickButtonsOptions['twoclick_buttons_display_index'] == null && is_home())
 
 			/**
 			 * Sind wir im Jahresarchiv?
 			 */
-			if($this->array_TwoclickButtonsOptions['twoclick_buttons_display_year'] == null && is_year()) {
+			if($this->array_TwoclickButtonsOptions['twoclick_buttons_display_year'] == false && is_year()) {
 				return $content;
 			} // END if($this->array_TwoclickButtonsOptions['twoclick_buttons_display_year'] == null && is_year())
 
 			/**
 			 * Sind wir im Monatsarchiv?
 			 */
-			if($this->array_TwoclickButtonsOptions['twoclick_buttons_display_month'] == null && is_month()) {
+			if($this->array_TwoclickButtonsOptions['twoclick_buttons_display_month'] == false && is_month()) {
 				return $content;
 			} // END if($this->array_TwoclickButtonsOptions['twoclick_buttons_display_month'] == null && is_month())
 
 			/**
 			 * Sind wir im Tagesarchiv?
 			 */
-			if($this->array_TwoclickButtonsOptions['twoclick_buttons_display_day'] == null && is_day()) {
+			if($this->array_TwoclickButtonsOptions['twoclick_buttons_display_day'] == false && is_day()) {
 				return $content;
 			}
 
 			/**
 			 * Sind wir auf der Suchseite?
 			 */
-			if($this->array_TwoclickButtonsOptions['twoclick_buttons_display_search'] == null && is_search()) {
+			if($this->array_TwoclickButtonsOptions['twoclick_buttons_display_search'] == false && is_search()) {
 				return $content;
 			} // END if($this->array_TwoclickButtonsOptions['twoclick_buttons_display_search'] == null && is_search())
 
 			/**
 			 * Sind wir auf der Tagseite?
 			 */
-			if($this->array_TwoclickButtonsOptions['twoclick_buttons_display_tag'] == null && is_tag()) {
+			if($this->array_TwoclickButtonsOptions['twoclick_buttons_display_tag'] == false && is_tag()) {
 				return $content;
 			} // END if($this->array_TwoclickButtonsOptions['twoclick_buttons_display_tag'] == null && is_tag())
 
 			/**
 			 * Sind wir auf der Kategorieseite?
 			 */
-			if($this->array_TwoclickButtonsOptions['twoclick_buttons_display_category'] == null && is_category()) {
+			if($this->array_TwoclickButtonsOptions['twoclick_buttons_display_category'] == false && is_category()) {
 				return $content;
 			} // END if($this->array_TwoclickButtonsOptions['twoclick_buttons_display_category'] == null && is_category())
 
@@ -1091,7 +1091,7 @@ if(!class_exists('Twoclick_Social_Media_Buttons_Frontend')) {
 				 *
 				 * @since 1.0
 				 */
-				if((is_array($this->array_TwoclickButtonsOptions['twoclick_buttons_exclude_page'])) && (array_key_exists($post->ID, $this->array_TwoclickButtonsOptions['twoclick_buttons_exclude_page'])) && ($this->array_TwoclickButtonsOptions['twoclick_buttons_exclude_page'][$post->ID] == true)) {
+				if((isset($this->array_TwoclickButtonsOptions['twoclick_buttons_exclude_page']) && is_array($this->array_TwoclickButtonsOptions['twoclick_buttons_exclude_page'])) && (array_key_exists($post->ID, $this->array_TwoclickButtonsOptions['twoclick_buttons_exclude_page'])) && ($this->array_TwoclickButtonsOptions['twoclick_buttons_exclude_page'][$post->ID] == true)) {
 					return $content;
 				} // END if((is_array($this->array_TwoclickButtonsOptions['twoclick_buttons_exclude_page'])) && (array_key_exists($post->ID, $this->array_TwoclickButtonsOptions['twoclick_buttons_exclude_page'])) && ($this->array_TwoclickButtonsOptions['twoclick_buttons_exclude_page'][$post->ID] == true))
 
@@ -1100,7 +1100,7 @@ if(!class_exists('Twoclick_Social_Media_Buttons_Frontend')) {
 				 *
 				 * @since 1.1
 				 */
-				if((is_array($this->array_TwoclickButtonsOptions['twoclick_buttons_exclude_cpt'])) && (array_key_exists($post->post_type, $this->array_TwoclickButtonsOptions['twoclick_buttons_exclude_cpt'])) && ($this->array_TwoclickButtonsOptions['twoclick_buttons_exclude_cpt'][$post->post_type] == true)) {
+				if((isset($this->array_TwoclickButtonsOptions['twoclick_buttons_exclude_cpt']) && is_array($this->array_TwoclickButtonsOptions['twoclick_buttons_exclude_cpt'])) && (array_key_exists($post->post_type, $this->array_TwoclickButtonsOptions['twoclick_buttons_exclude_cpt'])) && ($this->array_TwoclickButtonsOptions['twoclick_buttons_exclude_cpt'][$post->post_type] == true)) {
 					return $content;
 				}
 

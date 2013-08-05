@@ -23,8 +23,7 @@ if(!function_exists('add_action')) {
  * @package 2 Click Social Media Buttons
  */
 if(!class_exists('Twoclick_Social_Media_Buttons_Backend_Changelog')) {
-	class Twoclick_Social_Media_Buttons_Backend_Changelog {
-		private $var_SettingsPageScreenID = 'settings_page_twoclick_buttons';
+	class Twoclick_Social_Media_Buttons_Backend_Changelog extends Twoclick_Social_Media_Buttons_Backend {
 
 		/**
 		 * Konstruktoren
@@ -190,34 +189,7 @@ if(!class_exists('Twoclick_Social_Media_Buttons_Backend_Changelog')) {
 				return false;
 			} // END if(!empty($var_sReadme))
 		} // END private function _get_changelog_from_reame()
-
-		/**
-		 * <[ Helper ]>
-		 * Check if we are on the settings page
-		 *
-		 * @return boolean
-		 */
-		private function _is_twoclick_settings_page() {
-			if($this->_get_screen()->id == $this->var_SettingsPageScreenID) {
-				return true;
-			} else {
-				return false;
-			} // END if($this->_get_screen()->id == $this->var_SettingsPageScreenID)
-		} // END private function _is_twoclick_settings_page()
-
-		/**
-		 * <[ Helper ]>
-		 * Returning the current screen object.
-		 *
-		 * @since 1.0
-		 * @author ppfeufer
-		 *
-		 * @return Ambigous <WP_Screen, NULL, StdClass, string, multitype:>
-		 */
-		private function _get_screen() {
-			return get_current_screen();
-		} // END private function _get_screen()
-	} // END class Twoclick_Social_Media_Buttons_Backend_Changelog
+	} // END class Twoclick_Social_Media_Buttons_Backend_Changelog extends Twoclick_Social_Media_Buttons_Backend
 
 	new Twoclick_Social_Media_Buttons_Backend_Changelog();
 } // END if(!class_exists('Twoclick_Social_Media_Buttons_Backend_Changelog'))

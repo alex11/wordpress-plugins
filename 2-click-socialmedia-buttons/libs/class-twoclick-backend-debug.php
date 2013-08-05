@@ -24,8 +24,7 @@ if(!function_exists('add_action')) {
  * @package 2 Click Social Media Buttons
  */
 if(!class_exists('Twoclick_Social_Media_Buttons_Backend_Debug')) {
-	class Twoclick_Social_Media_Buttons_Backend_Debug {
-		private $var_SettingsPageScreenID = 'settings_page_twoclick_buttons';
+	class Twoclick_Social_Media_Buttons_Backend_Debug extends Twoclick_Social_Media_Buttons_Backend {
 
 		/**
 		 * Konstruktor
@@ -42,33 +41,6 @@ if(!class_exists('Twoclick_Social_Media_Buttons_Backend_Debug')) {
 				$this->_get_debug_output();
 			} // END if($this->_is_twoclick_settings_page())
 		} // END function __construct()
-
-		/**
-		 * <[ Helper ]>
-		 * Check if we are on the settings page
-		 *
-		 * @return boolean
-		 */
-		private function _is_twoclick_settings_page() {
-			if($this->_get_screen()->id == $this->var_SettingsPageScreenID) {
-				return true;
-			} else {
-				return false;
-			} // END if($this->_get_screen()->id == $this->var_SettingsPageScreenID)
-		} // END private function _is_twoclick_settings_page()
-
-		/**
-		 * <[ Helper ]>
-		 * Returning the current screen object.
-		 *
-		 * @since 1.0
-		 * @author ppfeufer
-		 *
-		 * @return Ambigous <WP_Screen, NULL, StdClass, string, multitype:>
-		 */
-		private function _get_screen() {
-			return get_current_screen();
-		} // END private function _get_screen()
 
 		/**
 		 * Alle Debuginformationen ausgeben
@@ -179,7 +151,7 @@ if(!class_exists('Twoclick_Social_Media_Buttons_Backend_Debug')) {
 							<div class="inside">
 								<?php
 								echo '<pre>';
-								print_r($this->array_htmlspecialchars(get_option('twoclick_buttons_settings')));
+								print_r($this->array_htmlspecialchars($this->_get_option()));
 								echo '</pre>';
 								?>
 							</div>
@@ -403,7 +375,7 @@ if(!class_exists('Twoclick_Social_Media_Buttons_Backend_Debug')) {
 
 			return false;
 		} // END private function array_htmlspecialchars($array_Input, $var_sQuoteStyle = ENT_QUOTES, $var_sCharset = 'UTF-8')
-	} // END class Twoclick_Social_Media_Buttons_Backend_Debug
+	} // END class Twoclick_Social_Media_Buttons_Backend_Debug extends Twoclick_Social_Media_Buttons_Backend
 
 	// Debugklasse starten
 	new Twoclick_Social_Media_Buttons_Backend_Debug();

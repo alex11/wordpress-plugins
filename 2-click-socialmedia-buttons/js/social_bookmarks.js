@@ -70,7 +70,7 @@
 		document.cookie = name + '=' + value + '; expires=' + expires.toUTCString() + '; path=' + path + '; domain=' + domain;
 	}
 
-	$.fn.socialSharePrivacy = function(options){
+	$.fn.socialSharePrivacy = function(options) {
 		var defaults = {
 			'services' : {
 				'facebook' : {
@@ -208,17 +208,19 @@
 				}
 
 				var fb_enc_uri = encodeURIComponent(uri);
-				var fb_code = '<iframe src="http://www.facebook.com/plugins/like.php?locale=' + options.services.facebook.language + '&amp;href=' + fb_enc_uri + '&amp;send=false&amp;layout=button_count&amp;width=120&amp;show_faces=false&amp;action=' + options.services.facebook.action + '&amp;colorscheme=light&amp;font&amp;height=21" scrolling="no" frameborder="0" style="border:none; overflow:hidden; width:145px; height:21px;" allowTransparency="true"></iframe>';
+				var fb_code = '<iframe src="https://www.facebook.com/plugins/like.php?locale=' + options.services.facebook.language + '&amp;href=' + fb_enc_uri + '&amp;send=false&amp;layout=button_count&amp;width=120&amp;show_faces=false&amp;action=' + options.services.facebook.action + '&amp;colorscheme=light&amp;font&amp;height=21" scrolling="no" frameborder="0" style="border:none; overflow:hidden; width:145px; height:21px;" allowTransparency="true"></iframe>';
 				// Commented out
 				// Planned
 //				var fb_code = '<div class="fb-like" data-href="' + fb_enc_uri + '" data-send="false" data-layout="button_count" data-width="145" data-show-faces="false" data-action="' + options.services.facebook.action + '"></div><script>(function(d, s, id) {var js, fjs = d.getElementsByTagName(s)[0];if (d.getElementById(id)) return;js = d.createElement(s); js.id = id;js.src = "//connect.facebook.net/' + options.services.facebook.language + '/all.js";fjs.parentNode.insertBefore(js, fjs);}(document, \'script\', \'facebook-jssdk\'));</script>';
 				var fb_dummy_btn = '<span class="fb_' + options.services.facebook.action + '_dummy twoclick-network">&nbsp;</span>';
 
-				context.append('<li class="twoclick-facebook help_info"><span class="info">' + options.services.facebook.txt_info + '</span><span class="switch off">' + options.services.facebook.txt_fb_off + '</span><div class="fb_' + options.services.facebook.action + ' dummy_btn">' + fb_dummy_btn + '</div></li>');
+				context.append('<li class="twoclick-facebook"><div class="twoclick-button-container help_info"><span class="info">' + options.services.facebook.txt_info + '</span><span class="switch off">' + options.services.facebook.txt_fb_off + '</span><div class="fb_' + options.services.facebook.action + '_btn dummy_btn">' + fb_dummy_btn + '</div></div></li>');
 
-				var $container_fb = $('li.twoclick-facebook', context);
+				var $container_fb = $('li.twoclick-facebook .twoclick-button-container', context);
+//				var $container_fb = $('.twoclick-button-container', context);
 
-				$('li.twoclick-facebook div.fb_' + options.services.facebook.action + ' span.fb_' + options.services.facebook.action + '_dummy, .social_share_privacy_area_' + options.post_id + ' li.twoclick-facebook span.switch', context).live('click', function () {
+//				$('li.twoclick-facebook div.fb_' + options.services.facebook.action + ' span.fb_' + options.services.facebook.action + '_dummy, .social_share_privacy_area_' + options.post_id + ' li.twoclick-facebook span.switch', context).live('click', function () {
+				$(document).on('click', '.social_share_privacy_area_' + options.post_id + ' span.fb_' + options.services.facebook.action + '_dummy, .social_share_privacy_area_' + options.post_id + ' li.twoclick-facebook span.switch', function () {
 					if ($container_fb.find('span.switch').hasClass('off')) {
 						$container_fb.addClass('info_off');
 						$container_fb.find('span.switch').addClass('on').removeClass('off').html(options.services.facebook.txt_fb_on);
@@ -226,7 +228,7 @@
 					} else {
 						$container_fb.removeClass('info_off');
 						$container_fb.find('span.switch').addClass('off').removeClass('on').html(options.services.facebook.txt_fb_off);
-						$container_fb.find('.fb_' + options.services.facebook.action).html(fb_dummy_btn);
+						$container_fb.find('.fb_' + options.services.facebook.action + '_btn').html(fb_dummy_btn);
 					}
 				});
 			}
@@ -255,14 +257,15 @@
 
 				var twitter_enc_uri = encodeURIComponent(uri) + twitter_ref_track;
 				var twitter_count_url = encodeURIComponent(uri);
-				var twitter_code = '<iframe allowtransparency="true" frameborder="0" scrolling="no" src="http://platform.twitter.com/widgets/tweet_button.html?url=' + twitter_enc_uri + '&amp;counturl=' + twitter_count_url + '&amp;text=' + text + reply + '&amp;count=horizontal&amp;lang=' + options.services.twitter.language + '" style="width:115px; height:25px;"></iframe>';
+				var twitter_code = '<iframe allowtransparency="true" frameborder="0" scrolling="no" src="https://platform.twitter.com/widgets/tweet_button.html?url=' + twitter_enc_uri + '&amp;counturl=' + twitter_count_url + '&amp;text=' + text + reply + '&amp;count=horizontal&amp;lang=' + options.services.twitter.language + '" style="width:115px; height:25px;"></iframe>';
 				var twitter_dummy_btn = '<span class="twitter_dummy twoclick-network">&nbsp;</span>';
 
-				context.append('<li class="twoclick-twitter help_info"><span class="info">' + options.services.twitter.txt_info + '</span><span class="switch off">' + options.services.twitter.txt_twitter_off + '</span><div class="tweet dummy_btn">' + twitter_dummy_btn + '</div></li>');
+				context.append('<li class="twoclick-twitter"><div class="twoclick-button-container help_info"><span class="info">' + options.services.twitter.txt_info + '</span><span class="switch off">' + options.services.twitter.txt_twitter_off + '</span><div class="twitter_btn dummy_btn">' + twitter_dummy_btn + '</div></div></li>');
 
-				var $container_tw = $('li.twoclick-twitter', context);
+				var $container_tw = $('li.twoclick-twitter .twoclick-button-container', context);
 
-				$('li.twoclick-twitter div.tweet span.twitter_dummy, .social_share_privacy_area_' + options.post_id + ' li.twoclick-twitter span.switch', context).live('click', function () {
+//				$('li.twoclick-twitter div.tweet span.twitter_dummy, .social_share_privacy_area_' + options.post_id + ' li.twoclick-twitter span.switch', context).live('click', function () {
+				$(document).on('click', '.social_share_privacy_area_' + options.post_id + ' li.twoclick-twitter span.twitter_dummy, .social_share_privacy_area_' + options.post_id + ' li.twoclick-twitter span.switch', function () {
 					if($container_tw.find('span.switch').hasClass('off')) {
 						$container_tw.addClass('info_off');
 						$container_tw.find('span.switch').addClass('on').removeClass('off').html(options.services.twitter.txt_twitter_on);
@@ -270,7 +273,7 @@
 					} else {
 						$container_tw.removeClass('info_off');
 						$container_tw.find('span.switch').addClass('off').removeClass('on').html(options.services.twitter.txt_twitter_off);
-						$container_tw.find('.tweet').html(twitter_dummy_btn);
+						$container_tw.find('.twitter_btn').html(twitter_dummy_btn);
 					}
 				});
 			}
@@ -291,11 +294,12 @@
 				var gplus_code = '<div class="g-plusone" data-size="medium" data-href="' + gplus_uri + '"></div><script type="text/javascript">window.___gcfg = {lang: "' + options.services.gplus.language + '"}; (function() { var po = document.createElement("script"); po.type = "text/javascript"; po.async = true; po.src = "https://apis.google.com/js/plusone.js"; var s = document.getElementsByTagName("script")[0]; s.parentNode.insertBefore(po, s); })(); </script>';
 				var gplus_dummy_btn = '<span class="gplus_one_dummy twoclick-network">&nbsp;</span>';
 
-				context.append('<li class="twoclick-gplus help_info"><span class="info">' + options.services.gplus.txt_info + '</span><span class="switch off">' + options.services.gplus.txt_gplus_off + '</span><div class="gplusone dummy_btn">' + gplus_dummy_btn + '</div></li>');
+				context.append('<li class="twoclick-gplus"><div class="twoclick-button-container help_info"><span class="info">' + options.services.gplus.txt_info + '</span><span class="switch off">' + options.services.gplus.txt_gplus_off + '</span><div class="gplusone_btn dummy_btn">' + gplus_dummy_btn + '</div></div></li>');
 
-				var $container_gplus = $('li.twoclick-gplus', context);
+				var $container_gplus = $('li.twoclick-gplus .twoclick-button-container', context);
 
-				$('li.twoclick-gplus div.gplusone span.gplus_one_dummy, .social_share_privacy_area_' + options.post_id + ' li.twoclick-gplus span.switch', context).live('click', function () {
+//				$('li.twoclick-gplus div.gplusone span.gplus_one_dummy, .social_share_privacy_area_' + options.post_id + ' li.twoclick-gplus span.switch', context).live('click', function () {
+				$(document).on('click', '.social_share_privacy_area_' + options.post_id + ' li.twoclick-gplus span.gplus_one_dummy, .social_share_privacy_area_' + options.post_id + ' li.twoclick-gplus span.switch', function () {
 					if($container_gplus.find('span.switch').hasClass('off')) {
 						$container_gplus.addClass('info_off');
 						$container_gplus.find('span.switch').addClass('on').removeClass('off').html(options.services.gplus.txt_gplus_on);
@@ -303,7 +307,7 @@
 					} else {
 						$container_gplus.removeClass('info_off');
 						$container_gplus.find('span.switch').addClass('off').removeClass('on').html(options.services.gplus.txt_gplus_off);
-						$container_gplus.find('.gplusone').html(gplus_dummy_btn);
+						$container_gplus.find('.gplusone_btn').html(gplus_dummy_btn);
 					}
 				});
 			}
@@ -320,14 +324,15 @@
 				var flattr_title = options.services.flattr.the_title;
 				var flattr_uri = encodeURIComponent(uri);
 				var flattr_excerpt = options.services.flattr.the_excerpt;
-				var flattr_code = '<iframe src="http://api.flattr.com/button/view/?uid=' + options.services.flattr.uid + '&amp;url=' + flattr_uri + '&amp;title=' + flattr_title + '&amp;description=' + flattr_excerpt + '&amp;category=text&amp;language=de_DE&amp;button=compact" style="width:110px; height:22px;" allowtransparency="true" frameborder="0" scrolling="no"></iframe>';
+				var flattr_code = '<iframe src="https://api.flattr.com/button/view/?uid=' + options.services.flattr.uid + '&amp;url=' + flattr_uri + '&amp;title=' + flattr_title + '&amp;description=' + flattr_excerpt + '&amp;category=text&amp;language=de_DE&amp;button=compact" style="width:110px; height:22px;" allowtransparency="true" frameborder="0" scrolling="no"></iframe>';
 				var flattr_dummy_btn = '<span class="flattr_dummy twoclick-network">&nbsp;</span>';
 
-				context.append('<li class="twoclick-flattr help_info"><span class="info">' + options.services.flattr.txt_info + '</span><span class="switch off">' + options.services.flattr.txt_flattr_off + '</span><div class="flattrbtn dummy_btn">' + flattr_dummy_btn + '</div></li>');
+				context.append('<li class="twoclick-flattr"><div class="twoclick-button-container help_info"><span class="info">' + options.services.flattr.txt_info + '</span><span class="switch off">' + options.services.flattr.txt_flattr_off + '</span><div class="flattr_btn dummy_btn">' + flattr_dummy_btn + '</div></div></li>');
 
-				var $container_flattr = $('li.twoclick-flattr', context);
+				var $container_flattr = $('li.twoclick-flattr .twoclick-button-container', context);
 
-				$('li.twoclick-flattr div.flattrbtn span.flattr_dummy, .social_share_privacy_area_' + options.post_id + ' li.twoclick-flattr span.switch', context).live('click', function () {
+//				$('li.twoclick-flattr div.flattrbtn span.flattr_dummy, .social_share_privacy_area_' + options.post_id + ' li.twoclick-flattr span.switch', context).live('click', function () {
+				$(document).on('click', '.social_share_privacy_area_' + options.post_id + ' li.twoclick-flattr span.flattr_dummy, .social_share_privacy_area_' + options.post_id + ' li.twoclick-flattr span.switch', function () {
 					if($container_flattr.find('span.switch').hasClass('off')) {
 						$container_flattr.addClass('info_off');
 						$container_flattr.find('span.switch').addClass('on').removeClass('off').html(options.services.flattr.txt_flattr_on);
@@ -335,7 +340,7 @@
 					} else {
 						$container_flattr.removeClass('info_off');
 						$container_flattr.find('span.switch').addClass('off').removeClass('on').html(options.services.flattr.txt_flattr_off);
-						$container_flattr.find('.flattrbtn').html(flattr_dummy_btn);
+						$container_flattr.find('.flattr_btn').html(flattr_dummy_btn);
 					}
 				});
 			}
@@ -355,11 +360,12 @@
 				var xing_code = '<script type="XING/Share" data-counter="right" data-lang="' + xing_lingua + '" data-url="' + xing_uri + '"></script><script>;(function(d, s) {var x = d.createElement(s),s = d.getElementsByTagName(s)[0];x.src =\'https://www.xing-share.com/js/external/share.js\';s.parentNode.insertBefore(x, s);})(document, \'script\');</script>';
 				var xing_dummy_btn = '<span class="xing_dummy twoclick-network">&nbsp;</span>';
 
-				context.append('<li class="twoclick-xing help_info"><span class="info">' + options.services.xing.txt_info + '</span><span class="switch off">' + options.services.xing.txt_xing_off + '</span><div class="xingbtn dummy_btn">' + xing_dummy_btn + '</div></li>');
+				context.append('<li class="twoclick-xing"><div class="twoclick-button-container help_info"><span class="info">' + options.services.xing.txt_info + '</span><span class="switch off">' + options.services.xing.txt_xing_off + '</span><div class="xing_btn dummy_btn">' + xing_dummy_btn + '</div></div></li>');
 
-				var $container_xing = $('li.twoclick-xing', context);
+				var $container_xing = $('li.twoclick-xing .twoclick-button-container', context);
 
-				$('li.twoclick-xing div.xingbtn span.xing_dummy, .social_share_privacy_area_' + options.post_id + ' li.twoclick-xing span.switch', context).live('click', function () {
+//				$('li.twoclick-xing div.xingbtn span.xing_dummy, .social_share_privacy_area_' + options.post_id + ' li.twoclick-xing span.switch', context).live('click', function () {
+				$(document).on('click', '.social_share_privacy_area_' + options.post_id + ' li.twoclick-xing div.xing_btn span.xing_dummy, .social_share_privacy_area_' + options.post_id + ' li.twoclick-xing span.switch', function () {
 					if($container_xing.find('span.switch').hasClass('off')) {
 						$container_xing.addClass('info_off');
 						$container_xing.find('span.switch').addClass('on').removeClass('off').html(options.services.xing.txt_xing_on);
@@ -367,7 +373,7 @@
 					} else {
 						$container_xing.removeClass('info_off');
 						$container_xing.find('span.switch').addClass('off').removeClass('on').html(options.services.xing.txt_xing_off);
-						$container_xing.find('.xingbtn').html(xing_dummy_btn);
+						$container_xing.find('.xing_btn').html(xing_dummy_btn);
 					}
 				});
 			}
@@ -380,14 +386,15 @@
 				var pinterest_excerpt = encodeURIComponent(options.services.pinterest.the_excerpt);
 				var pinterest_media = options.services.pinterest.media;
 
-				var pinterest_code = '<a href="http://pinterest.com/pin/create/button/?url=' + pinterest_uri + '&media=' + pinterest_media + '&description=' + pinterest_excerpt + '" class="pin-it-button" count-layout="horizontal"><img border="0" src="//assets.pinterest.com/images/PinExt.png" title="Pin It" /></a><script type="text/javascript" src="//assets.pinterest.com/js/pinit.js"></script>';
+				var pinterest_code = '<a href="https://pinterest.com/pin/create/button/?url=' + pinterest_uri + '&media=' + pinterest_media + '&description=' + pinterest_excerpt + '" class="pin-it-button" count-layout="horizontal"><img border="0" src="//assets.pinterest.com/images/PinExt.png" title="Pin It" /></a><script type="text/javascript" src="//assets.pinterest.com/js/pinit.js"></script>';
 				var pinterest_dummy_btn = '<span class="pinterest_dummy twoclick-network">&nbsp;</span>';
 
-				context.append('<li class="twoclick-pinterest help_info"><span class="info">' + options.services.pinterest.txt_info + '</span><span class="switch off">' + options.services.pinterest.txt_pinterest_off + '</span><div class="pinterestbtn dummy_btn">' + pinterest_dummy_btn + '</div></li>');
+				context.append('<li class="twoclick-pinterest"><div class="twoclick-button-container help_info"><span class="info">' + options.services.pinterest.txt_info + '</span><span class="switch off">' + options.services.pinterest.txt_pinterest_off + '</span><div class="pinterest_btn dummy_btn">' + pinterest_dummy_btn + '</div></div></li>');
 
-				var $container_pinterest = $('li.twoclick-pinterest', context);
+				var $container_pinterest = $('li.twoclick-pinterest .twoclick-button-container', context);
 
-				$('li.twoclick-pinterest div.pinterestbtn span.pinterest_dummy, .social_share_privacy_area_' + options.post_id + ' li.twoclick-pinterest span.switch', context).live('click', function () {
+//				$('li.twoclick-pinterest div.pinterestbtn span.pinterest_dummy, .social_share_privacy_area_' + options.post_id + ' li.twoclick-pinterest span.switch', context).live('click', function () {
+				$(document).on('click', '.social_share_privacy_area_' + options.post_id + ' li.twoclick-pinterest span.pinterest_dummy, .social_share_privacy_area_' + options.post_id + ' li.twoclick-pinterest span.switch', function () {
 					if($container_pinterest.find('span.switch').hasClass('off')) {
 						$container_pinterest.addClass('info_off');
 						$container_pinterest.find('span.switch').addClass('on').removeClass('off').html(options.services.pinterest.txt_pinterest_on);
@@ -395,7 +402,7 @@
 					} else {
 						$container_pinterest.removeClass('info_off');
 						$container_pinterest.find('span.switch').addClass('off').removeClass('on').html(options.services.pinterest.txt_pinterest_off);
-						$container_pinterest.find('.pinterestbtn').html(pinterest_dummy_btn);
+						$container_pinterest.find('.pinterest_btn').html(pinterest_dummy_btn);
 					}
 				});
 			}
@@ -406,14 +413,15 @@
 			if(t3n_on) {
 				var t3n_uri = uri;
 
-				var t3n_code = '<div class="t3nAggregator" data-url="' + t3n_uri + '"></div><script type="text/javascript">(function() {var po = document.createElement("script"); po.type = "text/javascript"; po.async = true;po.src = "http://t3n.de/aggregator/ebutton_async";var s = document.getElementsByTagName("script")[0]; s.parentNode.insertBefore(po, s);})();</script>';
+				var t3n_code = '<div class="t3nAggregator" data-url="' + t3n_uri + '"></div><script type="text/javascript">(function() {var po = document.createElement("script"); po.type = "text/javascript"; po.async = true;po.src = "https://t3n.de/aggregator/ebutton_async";var s = document.getElementsByTagName("script")[0]; s.parentNode.insertBefore(po, s);})();</script>';
 				var t3n_dummy_btn = '<span class="t3n_dummy twoclick-network">&nbsp;</span>';
 
-				context.append('<li class="twoclick-t3n help_info"><span class="info">' + options.services.t3n.txt_info + '</span><span class="switch off">' + options.services.t3n.txt_t3n_off + '</span><div class="t3nbtn dummy_btn">' + t3n_dummy_btn + '</div></li>');
+				context.append('<li class="twoclick-t3n"><div class="twoclick-button-container help_info"><span class="info">' + options.services.t3n.txt_info + '</span><span class="switch off">' + options.services.t3n.txt_t3n_off + '</span><div class="t3n_btn dummy_btn">' + t3n_dummy_btn + '</div></div></li>');
 
-				var $container_t3n = $('li.twoclick-t3n', context);
+				var $container_t3n = $('li.twoclick-t3n .twoclick-button-container', context);
 
-				$('li.twoclick-t3n div.t3nbtn span.t3n_dummy, .social_share_privacy_area_' + options.post_id + ' li.twoclick-t3n span.switch', context).live('click', function () {
+//				$('li.twoclick-t3n div.t3nbtn span.t3n_dummy, .social_share_privacy_area_' + options.post_id + ' li.twoclick-t3n span.switch', context).live('click', function () {
+				$(document).on('click', '.social_share_privacy_area_' + options.post_id + ' li.twoclick-t3n span.t3n_dummy, .social_share_privacy_area_' + options.post_id + ' li.twoclick-t3n span.switch', function () {
 					if($container_t3n.find('span.switch').hasClass('off')) {
 						$container_t3n.addClass('info_off');
 						$container_t3n.find('span.switch').addClass('on').removeClass('off').html(options.services.t3n.txt_t3n_on);
@@ -421,7 +429,7 @@
 					} else {
 						$container_t3n.removeClass('info_off');
 						$container_t3n.find('span.switch').addClass('off').removeClass('on').html(options.services.t3n.txt_t3n_off);
-						$container_t3n.find('.t3nbtn').html(t3n_dummy_btn);
+						$container_t3n.find('.t3n_btn').html(t3n_dummy_btn);
 					}
 				});
 			}
@@ -432,14 +440,15 @@
 			if(linkedin_on) {
 				var linkedin_uri = uri;
 
-				var linkedin_code = '<script src="//platform.linkedin.com/in.js" type="text/javascript"></script><script type="IN/Share" data-url="' + linkedin_uri + '" data-counter="right"></script>';
+				var linkedin_code = '<script src="https://platform.linkedin.com/in.js" type="text/javascript"></script><script type="IN/Share" data-url="' + linkedin_uri + '" data-counter="right"></script>';
 				var linkedin_dummy_btn = '<span class="linkedin_dummy twoclick-network">&nbsp;</span>';
 
-				context.append('<li class="twoclick-linkedin help_info"><span class="info">' + options.services.linkedin.txt_info + '</span><span class="switch off">' + options.services.linkedin.txt_linkedin_off + '</span><div class="linkedinbtn dummy_btn">' + linkedin_dummy_btn + '</div></li>');
+				context.append('<li class="twoclick-linkedin"><div class="twoclick-button-container help_info"><span class="info">' + options.services.linkedin.txt_info + '</span><span class="switch off">' + options.services.linkedin.txt_linkedin_off + '</span><div class="linkedin_btn dummy_btn">' + linkedin_dummy_btn + '</div></div></li>');
 
-				var $container_linkedin = $('li.twoclick-linkedin', context);
+				var $container_linkedin = $('li.twoclick-linkedin .twoclick-button-container', context);
 
-				$('li.twoclick-linkedin div.linkedinbtn span.linkedin_dummy, .social_share_privacy_area_' + options.post_id + ' li.twoclick-linkedin span.switch', context).live('click', function () {
+//				$('li.twoclick-linkedin div.linkedinbtn span.linkedin_dummy, .social_share_privacy_area_' + options.post_id + ' li.twoclick-linkedin span.switch', context).live('click', function () {
+				$(document).on('click', '.social_share_privacy_area_' + options.post_id + ' li.twoclick-linkedin span.linkedin_dummy, .social_share_privacy_area_' + options.post_id + ' li.twoclick-linkedin span.switch', function () {
 					if($container_linkedin.find('span.switch').hasClass('off')) {
 						$container_linkedin.addClass('info_off');
 						$container_linkedin.find('span.switch').addClass('on').removeClass('off').html(options.services.linkedin.txt_linkedin_on);
@@ -447,7 +456,7 @@
 					} else {
 						$container_linkedin.removeClass('info_off');
 						$container_linkedin.find('span.switch').addClass('off').removeClass('on').html(options.services.linkedin.txt_linkedin_off);
-						$container_linkedin.find('.linkedinbtn').html(linkedin_dummy_btn);
+						$container_linkedin.find('.linkedin_btn').html(linkedin_dummy_btn);
 					}
 				});
 			}
@@ -458,7 +467,7 @@
 			var settings_class = '';
 			if(options.display_infobox == 'on') {
 				settings_class = 'settings_info_menu';
-			context.append('<li class="settings_info"><div class="' + settings_class + ' off perma_option_off"><a href="' + options.info_link + '"><span class="help_info icon"><span class="info">' + options.txt_help + '</span></span></a></div></li>');
+				context.append('<li class="settings_info"><div class="' + settings_class + ' off perma_option_off"><a href="' + options.info_link + '"><span class="help_info icon"><span class="info">' + options.txt_help + '</span></span></a></div></li>');
 			} else {
 				settings_class = 'settings_menu';
 				context.append('<li class="settings_info"><div class="' + settings_class + ' off perma_option_off"></div></li>');
@@ -467,14 +476,17 @@
 //			context.append(settings_html);
 
 			// Info-Overlays mit leichter Verzoegerung einblenden
-			$('.help_info:not(.info_off)', context).live('mouseenter', function () {
+//			$('.help_info:not(.info_off)', context).live('mouseenter', function () {
+			$(document).on('mouseenter', '.help_info:not(.info_off)', function () {
 				var $info_wrapper = $(this);
-				var timeout_id = window.setTimeout(function () { $($info_wrapper).addClass('display'); }, 500);
-				$(this).data('timeout_id', timeout_id);
+//				var timeout_id = window.setTimeout(function () { $($info_wrapper).addClass('display'); }, 0);
+				$($info_wrapper).addClass('display');
+//				$(this).data('timeout_id', timeout_id);
 			});
-			$('.help_info', context).live('mouseleave', function () {
-				var timeout_id = $(this).data('timeout_id');
-				window.clearTimeout(timeout_id);
+//			$('.help_info', context).live('mouseleave', function () {
+			$(document).on('mouseleave', '.help_info', function () {
+//				var timeout_id = $(this).data('timeout_id');
+//				window.clearTimeout(timeout_id);
 
 				if($(this).hasClass('display')) {
 					$(this).removeClass('display');
@@ -538,8 +550,8 @@
 					var perma_status_facebook = cookies.socialSharePrivacy_facebook === 'perma_on' ? checked : '';
 					$container_settings_info.find('form fieldset').append(
 						'<input type="checkbox" name="perma_status_facebook" id="perma_status_facebook"'
-							+ perma_status_facebook + ' /><label for="perma_status_facebook">'
-							+ options.services.facebook.display_name + '</label>'
+						+ perma_status_facebook + ' /><label for="perma_status_facebook">'
+						+ options.services.facebook.display_name + '</label>'
 					);
 				}
 
@@ -548,8 +560,8 @@
 					var perma_status_twitter = cookies.socialSharePrivacy_twitter === 'perma_on' ? checked : '';
 					$container_settings_info.find('form fieldset').append(
 						'<input type="checkbox" name="perma_status_twitter" id="perma_status_twitter"'
-							+ perma_status_twitter + ' /><label for="perma_status_twitter">'
-							+ options.services.twitter.display_name + '</label>'
+						+ perma_status_twitter + ' /><label for="perma_status_twitter">'
+						+ options.services.twitter.display_name + '</label>'
 					);
 				}
 
@@ -557,9 +569,9 @@
 				if(gplus_on && gplus_perma) {
 					var perma_status_gplus = cookies.socialSharePrivacy_gplus === 'perma_on' ? checked : '';
 					$container_settings_info.find('form fieldset').append(
-							'<input type="checkbox" name="perma_status_gplus" id="perma_status_gplus"'
-							+ perma_status_gplus + ' /><label for="perma_status_gplus">'
-							+ options.services.gplus.display_name + '</label>'
+						'<input type="checkbox" name="perma_status_gplus" id="perma_status_gplus"'
+						+ perma_status_gplus + ' /><label for="perma_status_gplus">'
+						+ options.services.gplus.display_name + '</label>'
 					);
 				}
 
@@ -567,9 +579,9 @@
 				if(flattr_on && flattr_perma) {
 					var perma_status_flattr = cookies.socialSharePrivacy_flattr === 'perma_on' ? checked : '';
 					$container_settings_info.find('form fieldset').append(
-							'<input type="checkbox" name="perma_status_flattr" id="perma_status_flattr"'
-							+ perma_status_flattr + ' /><label for="perma_status_flattr">'
-							+ options.services.flattr.display_name + '</label>'
+						'<input type="checkbox" name="perma_status_flattr" id="perma_status_flattr"'
+						+ perma_status_flattr + ' /><label for="perma_status_flattr">'
+						+ options.services.flattr.display_name + '</label>'
 					);
 				}
 
@@ -578,8 +590,8 @@
 					var perma_status_xing = cookies.socialSharePrivacy_xing === 'perma_on' ? checked : '';
 					$container_settings_info.find('form fieldset').append(
 						'<input type="checkbox" name="perma_status_xing" id="perma_status_xing"'
-							+ perma_status_xing + ' /><label for="perma_status_xing">'
-							+ options.services.xing.display_name + '</label>'
+						+ perma_status_xing + ' /><label for="perma_status_xing">'
+						+ options.services.xing.display_name + '</label>'
 					);
 				}
 
@@ -587,9 +599,9 @@
 				if(pinterest_on && pinterest_perma) {
 					var perma_status_pinterest = cookies.socialSharePrivacy_pinterest === 'perma_on' ? checked : '';
 					$container_settings_info.find('form fieldset').append(
-							'<input type="checkbox" name="perma_status_pinterest" id="perma_status_pinterest"'
-							+ perma_status_pinterest + ' /><label for="perma_status_pinterest">'
-							+ options.services.pinterest.display_name + '</label>'
+						'<input type="checkbox" name="perma_status_pinterest" id="perma_status_pinterest"'
+						+ perma_status_pinterest + ' /><label for="perma_status_pinterest">'
+						+ options.services.pinterest.display_name + '</label>'
 					);
 				}
 
@@ -597,9 +609,9 @@
 				if(t3n_on && t3n_perma) {
 					var perma_status_t3n = cookies.socialSharePrivacy_t3n === 'perma_on' ? checked : '';
 					$container_settings_info.find('form fieldset').append(
-							'<input type="checkbox" name="perma_status_t3n" id="perma_status_t3n"'
-							+ perma_status_t3n + ' /><label for="perma_status_t3n">'
-							+ options.services.t3n.display_name + '</label>'
+						'<input type="checkbox" name="perma_status_t3n" id="perma_status_t3n"'
+						+ perma_status_t3n + ' /><label for="perma_status_t3n">'
+						+ options.services.t3n.display_name + '</label>'
 					);
 				}
 
@@ -608,8 +620,8 @@
 					var perma_status_linkedin = cookies.socialSharePrivacy_linkedin === 'perma_on' ? checked : '';
 					$container_settings_info.find('form fieldset').append(
 						'<input type="checkbox" name="perma_status_linkedin" id="perma_status_linkedin"'
-							+ perma_status_linkedin + ' /><label for="perma_status_linkedin">'
-							+ options.services.linkedin.display_name + '</label>'
+						+ perma_status_linkedin + ' /><label for="perma_status_linkedin">'
+						+ options.services.linkedin.display_name + '</label>'
 					);
 				}
 
@@ -617,12 +629,14 @@
 				$container_settings_info.find('span.settings').css('cursor', 'pointer');
 
 				// Einstellungs-Menue bei mouseover ein-/ausblenden
-				$($container_settings_info.find('span.settings'), context).live('mouseenter', function () {
+//				$($container_settings_info.find('span.settings'), context).live('mouseenter', function () {
+				$(document).on('mouseenter', 'span.settings', function () {
 //					var timeout_id = window.setTimeout(function () { $container_settings_info.find('.settings_info_menu').removeClass('off').addClass('on'); }, 500);
 					var timeout_id = window.setTimeout(function () { $container_settings_info.find('.' + settings_class).removeClass('off').addClass('on'); }, 500);
 					$(this).data('timeout_id', timeout_id);
 				});
-				$($container_settings_info, context).live('mouseleave', function () {
+//				$($container_settings_info, context).live('mouseleave', function () {
+				$(document).on('mouseleave', 'li.settings_info', function () {
 					var timeout_id = $(this).data('timeout_id');
 					window.clearTimeout(timeout_id);
 //					$container_settings_info.find('.settings_info_menu').removeClass('on').addClass('off');
@@ -630,7 +644,8 @@
 				});
 
 				// Klick-Interaktion auf <input> um Dienste dauerhaft ein- oder auszuschalten (Cookie wird gesetzt oder geloescht)
-				$($container_settings_info.find('fieldset input')).live('click', function (event) {
+//				$($container_settings_info.find('fieldset input')).live('click', function (event) {
+				$(document).on('click', 'form fieldset input', function (event) {
 					var click = event.target.id;
 					var service = click.substr(click.lastIndexOf('_') + 1, click.length);
 					var cookie_name = 'socialSharePrivacy_' + service;
@@ -652,37 +667,37 @@
 
 				// Twitter
 				if(twitter_on && twitter_perma && cookies.socialSharePrivacy_twitter === 'perma_on') {
-					$('li.twoclick-twitter div.tweet span.twitter_dummy', context).click();
+					$('li.twoclick-twitter div.twitter_btn span.twitter_dummy', context).click();
 				}
 
 				// Googleplus
 				if(gplus_on && gplus_perma && cookies.socialSharePrivacy_gplus === 'perma_on') {
-					$('li.twoclick-gplus div.gplusone span.gplus_one_dummy', context).click();
+					$('li.twoclick-gplus div.gplusone_btn span.gplus_one_dummy', context).click();
 				}
 
 				// Flattr
 				if(flattr_on && flattr_perma && cookies.socialSharePrivacy_flattr === 'perma_on') {
-					$('li.twoclick-flattr div.flattrbtn span.flattr_dummy', context).click();
+					$('li.twoclick-flattr div.flattr_btn span.flattr_dummy', context).click();
 				}
 
 				// Xing
 				if(xing_on && xing_perma && cookies.socialSharePrivacy_xing === 'perma_on') {
-					$('li.twoclick-xing div.xingbtn span.xing_dummy', context).click();
+					$('li.twoclick-xing div.xing_btn span.xing_dummy', context).click();
 				}
 
 				// Pinterest
 				if(pinterest_on && pinterest_perma && cookies.socialSharePrivacy_pinterest === 'perma_on') {
-					$('li.twoclick-pinterest div.pinterestbtn span.pinterest_dummy', context).click();
+					$('li.twoclick-pinterest div.pinterest_btn span.pinterest_dummy', context).click();
 				}
 
 				// t3n
 				if(t3n_on && t3n_perma && cookies.socialSharePrivacy_t3n === 'perma_on') {
-					$('li.twoclick-t3n div.t3nbtn span.t3n_dummy', context).click();
+					$('li.twoclick-t3n div.t3n_btn span.t3n_dummy', context).click();
 				}
 
 				// LinkedIn
 				if(linkedin_on && linkedin_perma && cookies.socialSharePrivacy_linkedin === 'perma_on') {
-					$('li.twoclick-linkedin div.linkedinbtn span.linkedin_dummy', context).click();
+					$('li.twoclick-linkedin div.linkedin_btn span.linkedin_dummy', context).click();
 				}
 			}
 		});

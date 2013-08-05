@@ -23,7 +23,7 @@ if(!function_exists('add_action')) {
  * @package 2 Click Social Media Buttons
  */
 if(!class_exists('Twoclick_Social_Media_Buttons_Backend_Help')) {
-	class Twoclick_Social_Media_Buttons_Backend_Help {
+	class Twoclick_Social_Media_Buttons_Backend_Help extends Twoclick_Social_Media_Buttons_Backend {
 
-	} // END class Twoclick_Social_Media_Buttons_Backend_Help
+	} // END class Twoclick_Social_Media_Buttons_Backend_Help extends Twoclick_Social_Media_Buttons_Backend
 } // END if(!class_exists('Twoclick_Social_Media_Buttons_Backend_Help'))

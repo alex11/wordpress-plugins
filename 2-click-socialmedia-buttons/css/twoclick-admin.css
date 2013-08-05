@@ -9,7 +9,8 @@ html[xmlns] .clearfix {display:block;}
 .postbox{margin-bottom:10px;}
 .postbox h3 {cursor:default;}
 .posttypediv {clear:both;}
-.submit .button-secondary {margin-left:30px;}
+.submit .button-secondary,.submit .twoclick-reset-options {margin-left:30px;}
+.submit .twoclick-reset-options {padding:0.4em 0.8em 0.5em;}
 .twoclick-changelog li:before {content:"\00BB  "; padding-right:7px}
 .twoclick-intro {clear:both;}
 

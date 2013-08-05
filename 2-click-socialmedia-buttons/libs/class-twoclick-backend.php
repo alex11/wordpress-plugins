@@ -127,15 +127,14 @@ if(!class_exists('Twoclick_Social_Media_Buttons_Backend')) {
 		 * @param string $parameter
 		 * @return array
 		 */
-		private function _get_option($parameter = '') {
+		function _get_option($parameter = '') {
 			/**
-			 * Prüfen ob das Formular abgesendet wurde.
-			 * Wenn nicht, übernehme $this->array_TwoclickButtonsOptions,
-			 * ansonsten lade sie neu.
+			 * Prüfen ob das Formular abgesendet wurde oder das Optionsarray leer ist.
+			 * Wenn ja, lade Optionen neu, ansonsten übernehme das Array.
 			 */
-			if(isset($_REQUEST['settings-updated']) && ($_REQUEST['settings-updated'] == true)) {
+			if((isset($_REQUEST['settings-updated']) && ($_REQUEST['settings-updated'] == true)) || (empty($this->array_TwoclickButtonsOptions))) {
 				$this->array_TwoclickButtonsOptions = get_option($this->var_sOptionsName);
-			} // END if(isset($_REQUEST['settings-updated']) && ($_REQUEST['settings-updated'] == true))
+			} // END if((isset($_REQUEST['settings-updated']) && ($_REQUEST['settings-updated'] == true)) || (empty($this->array_TwoclickButtonsOptions)))
 
 			if($parameter == '') {
 				return $this->array_TwoclickButtonsOptions;
@@ -207,7 +206,7 @@ if(!class_exists('Twoclick_Social_Media_Buttons_Backend')) {
 		 *
 		 * @return boolean
 		 */
-		private function _is_twoclick_settings_page() {
+		function _is_twoclick_settings_page() {
 			if($this->_get_screen()->id == $this->var_SettingsPageScreenID) {
 				return true;
 			} else {
@@ -365,165 +364,178 @@ if(!class_exists('Twoclick_Social_Media_Buttons_Backend')) {
 			} else {
 				$output = $this->array_TwoclickButtonsOptions;
 
-				switch($input['twoclick_buttons_settings_section']) {
-					case 'general-settings':
-						// Validating General Setting
-						foreach((array) $this->array_SupportedNetworks as $var_sKey => $var_sValue) {
-							$output['twoclick_buttons_display_' . $var_sKey] = ($input['twoclick_buttons_display_' . $var_sKey] == 1 ? true : false);
-							$output['twoclick_buttons_display_' . $var_sKey . '_perm'] = ($input['twoclick_buttons_display_' . $var_sKey . '_perm'] == 1 ? true : false);
-						} // END foreach((array) $this->array_SupportedNetworks as $var_sKey => $var_sValue)
+				if(isset($input['twoclick_buttons_settings_section'])) {
+					switch($input['twoclick_buttons_settings_section']) {
+						case 'general-settings':
+							// Validating General Setting
+							foreach((array) $this->array_SupportedNetworks as $var_sKey => $var_sValue) {
+								$output['twoclick_buttons_display_' . $var_sKey] = (isset($input['twoclick_buttons_display_' . $var_sKey]) && $input['twoclick_buttons_display_' . $var_sKey] == 1) ? true : false;
+								$output['twoclick_buttons_display_' . $var_sKey . '_perm'] = (isset($input['twoclick_buttons_display_' . $var_sKey . '_perm']) && $input['twoclick_buttons_display_' . $var_sKey . '_perm'] == 1) ? true : false;
+							} // END foreach((array) $this->array_SupportedNetworks as $var_sKey => $var_sValue)
 
-						$output['twoclick_buttons_display_page'] = ($input['twoclick_buttons_display_page'] == 1 ? true : false);
-						$output['twoclick_buttons_display_sidebar_widget'] = ($input['twoclick_buttons_display_sidebar_widget'] == 1 ? true : false);
-						$output['twoclick_buttons_display_private'] = ($input['twoclick_buttons_display_private'] == 1 ? true : false);
-						$output['twoclick_buttons_display_password'] = ($input['twoclick_buttons_display_password'] == 1 ? true : false);
-						$output['twoclick_buttons_display_index'] = ($input['twoclick_buttons_display_index'] == 1 ? true : false);
-						$output['twoclick_buttons_display_year'] = ($input['twoclick_buttons_display_year'] == 1 ? true : false);
-						$output['twoclick_buttons_display_month'] = ($input['twoclick_buttons_display_month'] == 1 ? true : false);
-						$output['twoclick_buttons_display_day'] = ($input['twoclick_buttons_display_day'] == 1 ? true : false);
-						$output['twoclick_buttons_display_search'] = ($input['twoclick_buttons_display_search'] == 1 ? true : false);
-						$output['twoclick_buttons_display_category'] = ($input['twoclick_buttons_display_category'] == 1 ? true : false);
-						$output['twoclick_buttons_display_tag'] = ($input['twoclick_buttons_display_tag'] == 1 ? true : false);
-						$output['twoclick_buttons_where'] = wp_filter_nohtml_kses($input['twoclick_buttons_where']);
+							$output['twoclick_buttons_display_page'] = (isset($input['twoclick_buttons_display_page']) && $input['twoclick_buttons_display_page'] == 1) ? true : false;
+							$output['twoclick_buttons_display_sidebar_widget'] = (isset($input['twoclick_buttons_display_sidebar_widget']) && $input['twoclick_buttons_display_sidebar_widget']) == 1 ? true : false;
+							$output['twoclick_buttons_display_private'] = (isset($input['twoclick_buttons_display_private']) && $input['twoclick_buttons_display_private'] == 1) ? true : false;
+							$output['twoclick_buttons_display_password'] = (isset($input['twoclick_buttons_display_password']) && $input['twoclick_buttons_display_password'] == 1) ? true : false;
+							$output['twoclick_buttons_display_index'] = (isset($input['twoclick_buttons_display_index']) && $input['twoclick_buttons_display_index'] == 1) ? true : false;
+							$output['twoclick_buttons_display_year'] = (isset($input['twoclick_buttons_display_year']) && $input['twoclick_buttons_display_year'] == 1) ? true : false;
+							$output['twoclick_buttons_display_month'] = (isset($input['twoclick_buttons_display_month']) && $input['twoclick_buttons_display_month'] == 1) ? true : false;
+							$output['twoclick_buttons_display_day'] = (isset($input['twoclick_buttons_display_day']) && $input['twoclick_buttons_display_day'] == 1) ? true : false;
+							$output['twoclick_buttons_display_search'] = (isset($input['twoclick_buttons_display_search']) && $input['twoclick_buttons_display_search'] == 1) ? true : false;
+							$output['twoclick_buttons_display_category'] = (isset($input['twoclick_buttons_display_category']) && $input['twoclick_buttons_display_category'] == 1) ? true : false;
+							$output['twoclick_buttons_display_tag'] = (isset($input['twoclick_buttons_display_tag']) && $input['twoclick_buttons_display_tag'] == 1) ? true : false;
+							$output['twoclick_buttons_where'] = wp_filter_nohtml_kses($input['twoclick_buttons_where']);
 
-						// Validating custom post types
-						unset($output['twoclick_buttons_exclude_cpt']);
-						if(is_array($input['twoclick_buttons_exclude_cpt'])) {
-							foreach($input['twoclick_buttons_exclude_cpt'] as $key => $value) {
-								if((post_type_exists($key)) && ($value == 1)) {
-									$output['twoclick_buttons_exclude_cpt'][$key] = true;
-								} else {
-									unset($output['twoclick_buttons_exclude_cpt'][$key]);
-								} // END if((post_type_exists($key)) && ($value == 1))
-							} // END foreach($input['twoclick_buttons_exclude_page'] as $key => $value)
-						} // END if(is_array($input['twoclick_buttons_exclude_page']))
+							// Validating custom post types
+							unset($output['twoclick_buttons_exclude_cpt']);
+							if(isset($input['twoclick_buttons_exclude_cpt']) && is_array($input['twoclick_buttons_exclude_cpt'])) {
+								foreach($input['twoclick_buttons_exclude_cpt'] as $key => $value) {
+									if((post_type_exists($key)) && ($value == 1)) {
+										$output['twoclick_buttons_exclude_cpt'][$key] = true;
+									} else {
+										unset($output['twoclick_buttons_exclude_cpt'][$key]);
+									} // END if((post_type_exists($key)) && ($value == 1))
+								} // END foreach($input['twoclick_buttons_exclude_page'] as $key => $value)
+							} // END if(is_array($input['twoclick_buttons_exclude_page']))
 
-						// Validating excludes pages
-						unset($output['twoclick_buttons_exclude_page']);
-						if(is_array($input['twoclick_buttons_exclude_page'])) {
-							foreach($input['twoclick_buttons_exclude_page'] as $key => $value) {
-								if((get_post_type($key) == 'page') && ($value == 1)) {
-									$output['twoclick_buttons_exclude_page'][$key] = true;
-								} else {
-									unset($output['twoclick_buttons_exclude_page'][$key]);
-								} // END if((get_post_type($key) == 'page') && ($value == 1))
-							} // END foreach($input['twoclick_buttons_exclude_page'] as $key => $value)
-						} // END if(is_array($input['twoclick_buttons_exclude_page']))
-						break;
+							// Validating excludes pages
+							unset($output['twoclick_buttons_exclude_page']);
+							if(isset($input['twoclick_buttons_exclude_page']) && is_array($input['twoclick_buttons_exclude_page'])) {
+								foreach($input['twoclick_buttons_exclude_page'] as $key => $value) {
+									if((get_post_type($key) == 'page') && ($value == 1)) {
+										$output['twoclick_buttons_exclude_page'][$key] = true;
+									} else {
+										unset($output['twoclick_buttons_exclude_page'][$key]);
+									} // END if((get_post_type($key) == 'page') && ($value == 1))
+								} // END foreach($input['twoclick_buttons_exclude_page'] as $key => $value)
+							} // END if(is_array($input['twoclick_buttons_exclude_page']))
+							break;
 
-					case 'button-settings':
-						// Validating Button Settings
-						$output['twoclick_buttons_facebook_action'] = wp_filter_nohtml_kses($input['twoclick_buttons_facebook_action']);
-						$output['twoclick_buttons_twitter_reply'] = $this->_get_sanitized_twitter_name($input['twoclick_buttons_twitter_reply']);
-						$output['twoclick_buttons_twitter_tweettext'] = wp_filter_nohtml_kses($input['twoclick_buttons_twitter_tweettext']);
-						$output['twoclick_buttons_twitter_tweettext_default_as'] = wp_filter_nohtml_kses($input['twoclick_buttons_twitter_tweettext_default_as']);
-						$output['twoclick_buttons_twitter_tweettext_owntext'] = wp_filter_nohtml_kses($input['twoclick_buttons_twitter_tweettext_owntext']);
-						$output['twoclick_buttons_twitter_hashtags'] = ($input['twoclick_buttons_twitter_hashtags'] == 1 ? true : false);
-						$output['twoclick_buttons_flattr_uid'] = wp_filter_nohtml_kses($input['twoclick_buttons_flattr_uid']);
-						$output['twoclick_buttons_pinterest_description'] = wp_filter_nohtml_kses($input['twoclick_buttons_pinterest_description']);
-						break;
+						case 'button-settings':
+							// Validating Button Settings
+							$output['twoclick_buttons_facebook_action'] = wp_filter_nohtml_kses($input['twoclick_buttons_facebook_action']);
+							$output['twoclick_buttons_twitter_reply'] = $this->_get_sanitized_twitter_name($input['twoclick_buttons_twitter_reply']);
+							$output['twoclick_buttons_twitter_tweettext'] = wp_filter_nohtml_kses($input['twoclick_buttons_twitter_tweettext']);
+							$output['twoclick_buttons_twitter_tweettext_default_as'] = wp_filter_nohtml_kses($input['twoclick_buttons_twitter_tweettext_default_as']);
+							$output['twoclick_buttons_twitter_tweettext_owntext'] = wp_filter_nohtml_kses($input['twoclick_buttons_twitter_tweettext_owntext']);
+							$output['twoclick_buttons_twitter_hashtags'] = (isset($input['twoclick_buttons_twitter_hashtags']) && $input['twoclick_buttons_twitter_hashtags'] == 1) ? true : false;
+							$output['twoclick_buttons_flattr_uid'] = wp_filter_nohtml_kses($input['twoclick_buttons_flattr_uid']);
+							$output['twoclick_buttons_pinterest_description'] = wp_filter_nohtml_kses($input['twoclick_buttons_pinterest_description']);
 
-					case 'infotext-settings':
-						// Facebook
-						if(!empty($input['twoclick_buttons_infotext_facebook'])) {
-							$output['twoclick_buttons_infotext_facebook'] = stripslashes(wp_filter_post_kses($input['twoclick_buttons_infotext_facebook']));
-						} else {
-							unset($output['twoclick_buttons_infotext_facebook']);
-						} // END if(!empty($input['twoclick_buttons_infotext_facebook']))
+							if(!empty($input['twoclick_buttons_language'])) {
+								$output['twoclick_buttons_language'] = wp_filter_nohtml_kses($input['twoclick_buttons_language']);
+							} else {
+								unset($output['twoclick_buttons_language']);
+							}
+							break;
 
-						// Twitter
-						if(!empty($input['twoclick_buttons_infotext_twitter'])) {
-							$output['twoclick_buttons_infotext_twitter'] = stripslashes(wp_filter_post_kses($input['twoclick_buttons_infotext_twitter']));
-						} else {
-							unset($output['twoclick_buttons_infotext_twitter']);
-						} // END if(!empty($input['twoclick_buttons_infotext_twitter']))
+						case 'infotext-settings':
+							// Facebook
+							if(!empty($input['twoclick_buttons_infotext_facebook'])) {
+								$output['twoclick_buttons_infotext_facebook'] = stripslashes(wp_filter_post_kses($input['twoclick_buttons_infotext_facebook']));
+							} else {
+								unset($output['twoclick_buttons_infotext_facebook']);
+							} // END if(!empty($input['twoclick_buttons_infotext_facebook']))
 
-						// Google+
-						if(!empty($input['twoclick_buttons_infotext_googleplus'])) {
-							$output['twoclick_buttons_infotext_googleplus'] = stripslashes(wp_filter_post_kses($input['twoclick_buttons_infotext_googleplus']));
-						} else {
-							unset($output['twoclick_buttons_infotext_googleplus']);
-						} // END if(!empty($input['twoclick_buttons_introtext']))
+							// Twitter
+							if(!empty($input['twoclick_buttons_infotext_twitter'])) {
+								$output['twoclick_buttons_infotext_twitter'] = stripslashes(wp_filter_post_kses($input['twoclick_buttons_infotext_twitter']));
+							} else {
+								unset($output['twoclick_buttons_infotext_twitter']);
+							} // END if(!empty($input['twoclick_buttons_infotext_twitter']))
 
-						// Flattr
-						if(!empty($input['twoclick_buttons_infotext_flattr'])) {
-							$output['twoclick_buttons_infotext_flattr'] = stripslashes(wp_filter_post_kses($input['twoclick_buttons_infotext_flattr']));
-						} else {
-							unset($output['twoclick_buttons_infotext_flattr']);
-						} // END if(!empty($input['twoclick_buttons_infotext_flattr']))
+							// Google+
+							if(!empty($input['twoclick_buttons_infotext_googleplus'])) {
+								$output['twoclick_buttons_infotext_googleplus'] = stripslashes(wp_filter_post_kses($input['twoclick_buttons_infotext_googleplus']));
+							} else {
+								unset($output['twoclick_buttons_infotext_googleplus']);
+							} // END if(!empty($input['twoclick_buttons_introtext']))
 
-						// Xing
-						if(!empty($input['twoclick_buttons_infotext_xing'])) {
-							$output['twoclick_buttons_infotext_xing'] = stripslashes(wp_filter_post_kses($input['twoclick_buttons_infotext_xing']));
-						} else {
-							unset($output['twoclick_buttons_infotext_xing']);
-						} // END if(!empty($input['twoclick_buttons_infotext_xing']))
+							// Flattr
+							if(!empty($input['twoclick_buttons_infotext_flattr'])) {
+								$output['twoclick_buttons_infotext_flattr'] = stripslashes(wp_filter_post_kses($input['twoclick_buttons_infotext_flattr']));
+							} else {
+								unset($output['twoclick_buttons_infotext_flattr']);
+							} // END if(!empty($input['twoclick_buttons_infotext_flattr']))
 
-						// Pinterest
-						if(!empty($input['twoclick_buttons_infotext_pinterest'])) {
-							$output['twoclick_buttons_infotext_pinterest'] = stripslashes(wp_filter_post_kses($input['twoclick_buttons_infotext_pinterest']));
-						} else {
-							unset($output['twoclick_buttons_infotext_pinterest']);
-						} // END if(!empty($input['twoclick_buttons_infotext_pinterest']))
+							// Xing
+							if(!empty($input['twoclick_buttons_infotext_xing'])) {
+								$output['twoclick_buttons_infotext_xing'] = stripslashes(wp_filter_post_kses($input['twoclick_buttons_infotext_xing']));
+							} else {
+								unset($output['twoclick_buttons_infotext_xing']);
+							} // END if(!empty($input['twoclick_buttons_infotext_xing']))
 
-						// t3n
-						if(!empty($input['twoclick_buttons_infotext_t3n'])) {
-							$output['twoclick_buttons_infotext_t3n'] = stripslashes(wp_filter_post_kses($input['twoclick_buttons_infotext_t3n']));
-						} else {
-							unset($output['twoclick_buttons_infotext_t3n']);
-						} // END if(!empty($input['twoclick_buttons_infotext_t3n']))
+							// Pinterest
+							if(!empty($input['twoclick_buttons_infotext_pinterest'])) {
+								$output['twoclick_buttons_infotext_pinterest'] = stripslashes(wp_filter_post_kses($input['twoclick_buttons_infotext_pinterest']));
+							} else {
+								unset($output['twoclick_buttons_infotext_pinterest']);
+							} // END if(!empty($input['twoclick_buttons_infotext_pinterest']))
 
-						// LinkedIn
-						if(!empty($input['twoclick_buttons_infotext_linkedin'])) {
-							$output['twoclick_buttons_infotext_linkedin'] = stripslashes(wp_filter_post_kses($input['twoclick_buttons_infotext_linkedin']));
-						} else {
-							unset($output['twoclick_buttons_infotext_linkedin']);
-						} // END if(!empty($input['twoclick_buttons_infotext_linkedin']))
+							// t3n
+							if(!empty($input['twoclick_buttons_infotext_t3n'])) {
+								$output['twoclick_buttons_infotext_t3n'] = stripslashes(wp_filter_post_kses($input['twoclick_buttons_infotext_t3n']));
+							} else {
+								unset($output['twoclick_buttons_infotext_t3n']);
+							} // END if(!empty($input['twoclick_buttons_infotext_t3n']))
 
-						// Infobutton
-						if(!empty($input['twoclick_buttons_infotext_infobutton'])) {
-							$output['twoclick_buttons_infotext_infobutton'] = stripslashes(wp_filter_post_kses($input['twoclick_buttons_infotext_infobutton']));
-						} else {
-							unset($output['twoclick_buttons_infotext_infobutton']);
-						} // END if(!empty($input['twoclick_buttons_infotext_infobutton']))
+							// LinkedIn
+							if(!empty($input['twoclick_buttons_infotext_linkedin'])) {
+								$output['twoclick_buttons_infotext_linkedin'] = stripslashes(wp_filter_post_kses($input['twoclick_buttons_infotext_linkedin']));
+							} else {
+								unset($output['twoclick_buttons_infotext_linkedin']);
+							} // END if(!empty($input['twoclick_buttons_infotext_linkedin']))
 
-						// Permaoption
-						if(!empty($input['twoclick_buttons_infotext_permaoption'])) {
-							$output['twoclick_buttons_infotext_permaoption'] = stripslashes(wp_filter_post_kses($input['twoclick_buttons_infotext_permaoption']));
-						} else {
-							unset($output['twoclick_buttons_infotext_permaoption']);
-						} // END if(!empty($input['twoclick_buttons_infotext_permaoption']))
+							// Infobutton
+							if(!empty($input['twoclick_buttons_infotext_infobutton'])) {
+								$output['twoclick_buttons_infotext_infobutton'] = stripslashes(wp_filter_post_kses($input['twoclick_buttons_infotext_infobutton']));
+							} else {
+								unset($output['twoclick_buttons_infotext_infobutton']);
+							} // END if(!empty($input['twoclick_buttons_infotext_infobutton']))
 
-						// Infolink
-						if(!empty($input['twoclick_buttons_infolink'])) {
-							$output['twoclick_buttons_infolink'] = esc_url($input['twoclick_buttons_infolink']);
-						} else {
-							unset($output['twoclick_buttons_infolink']);
-						} // END if(!empty($input['twoclick_buttons_infolink']))
+							// Permaoption
+							if(!empty($input['twoclick_buttons_infotext_permaoption'])) {
+								$output['twoclick_buttons_infotext_permaoption'] = stripslashes(wp_filter_post_kses($input['twoclick_buttons_infotext_permaoption']));
+							} else {
+								unset($output['twoclick_buttons_infotext_permaoption']);
+							} // END if(!empty($input['twoclick_buttons_infotext_permaoption']))
 
-						// Introtext
-						if(!empty($input['twoclick_buttons_introtext'])) {
-							$output['twoclick_buttons_introtext'] = stripslashes(wp_filter_post_kses($input['twoclick_buttons_introtext']));
-						} else {
-							$output['twoclick_buttons_introtext'] = '';
-						} // END if(!empty($input['twoclick_buttons_introtext']))
-						break;
+							// Infolink
+							if(!empty($input['twoclick_buttons_infolink'])) {
+								$output['twoclick_buttons_infolink'] = esc_url($input['twoclick_buttons_infolink']);
+							} else {
+								unset($output['twoclick_buttons_infolink']);
+							} // END if(!empty($input['twoclick_buttons_infolink']))
 
-					case 'other-settings':
-						// Validating Other Settings
-						$output['twoclick_buttons_postthumbnail'] = esc_url($input['twoclick_buttons_postthumbnail']);
-						$output['twoclick_buttons_url_tracking'] = ($input['twoclick_buttons_url_tracking'] == 1 ? true : false);
-						$output['twoclick_buttons_opengraph_disable'] = ($input['twoclick_buttons_opengraph_disable'] == 1 ? true : false);
-						$output['twoclick_buttons_permalink_with_get'] = ($input['twoclick_buttons_permalink_with_get'] == 1 ? true : false);
-						$output['twoclick_buttons_display_infobox'] = ($input['twoclick_buttons_display_infobox'] == 1 ? true : false);
+							// Introtext
+							if(!empty($input['twoclick_buttons_introtext'])) {
+								$output['twoclick_buttons_introtext'] = stripslashes(wp_filter_post_kses($input['twoclick_buttons_introtext']));
+							} else {
+								$output['twoclick_buttons_introtext'] = '';
+							} // END if(!empty($input['twoclick_buttons_introtext']))
+							break;
 
-						if(!empty($input['twoclick_buttons_custom_css'])) {
-							$output['twoclick_buttons_custom_css'] = stripslashes(wp_filter_post_kses($input['twoclick_buttons_custom_css']));
-						} else {
-							unset($output['twoclick_buttons_custom_css']);
-						} // END if(!empty($input['twoclick_buttons_custom_css']))
-						break;
-				} // END switch($input['twoclick_buttons_settings_section'])
+						case 'other-settings':
+							// Validating Other Settings
+							if(!empty($input['twoclick_buttons_postthumbnail'])) {
+								$output['twoclick_buttons_postthumbnail'] = esc_url($input['twoclick_buttons_postthumbnail']);
+							} else {
+								unset($output['twoclick_buttons_postthumbnail']);
+							} // END if(!empty($input['twoclick_buttons_postthumbnail']))
+
+							$output['twoclick_buttons_url_tracking'] = (isset($input['twoclick_buttons_url_tracking']) && $input['twoclick_buttons_url_tracking'] == 1) ? true : false;
+							$output['twoclick_buttons_opengraph_disable'] = (isset($input['twoclick_buttons_opengraph_disable']) && $input['twoclick_buttons_opengraph_disable'] == 1) ? true : false;
+							$output['twoclick_buttons_permalink_with_get'] = (isset($input['twoclick_buttons_permalink_with_get']) && $input['twoclick_buttons_permalink_with_get'] == 1) ? true : false;
+							$output['twoclick_buttons_display_infobox'] = (isset($input['twoclick_buttons_display_infobox']) && $input['twoclick_buttons_display_infobox'] == 1) ? true : false;
+
+							if(!empty($input['twoclick_buttons_custom_css'])) {
+								$output['twoclick_buttons_custom_css'] = stripslashes(wp_filter_post_kses($input['twoclick_buttons_custom_css']));
+							} else {
+								unset($output['twoclick_buttons_custom_css']);
+							} // END if(!empty($input['twoclick_buttons_custom_css']))
+							break;
+					} // END switch($input['twoclick_buttons_settings_section'])
+				} // END if(isset($input['twoclick_buttons_settings_section']))
 			} // END if(isset($input['twoclick_buttons_settings_reset']))
 
 			return $output;
@@ -686,6 +698,8 @@ if(!class_exists('Twoclick_Social_Media_Buttons_Backend')) {
 		 * @author ppfeufer
 		 */
 		function options_page() {
+			global $wp_scripts;
+
 			if($this->_is_twoclick_settings_page()) {
 				require_once(plugin_dir_path(__FILE__) . 'class-twoclick-pages-walker.php');
 			} // END if($this->_is_twoclick_settings_page())
@@ -703,10 +717,24 @@ if(!class_exists('Twoclick_Social_Media_Buttons_Backend')) {
 			);
 			?>
 			<div class="wrap">
-				<div class="icon32" id="icon-options-general"><br /></div>
+				<div class="icon32" id="icon-options-general">&nbsp;</div>
 				<h2><?php _e('Settings for 2-Click Social Media Buttons', TWOCLICK_TEXTDOMAIN); ?></h2>
 				<?php
-
+				if(version_compare($wp_scripts->registered['jquery']->ver, TWOCLICK_JQUERY_REQUIERED, '<')) {
+					?>
+					<div class='error fade'>
+						<p>
+							<?php
+							printf(__('Your WordPress is running with jQuery Version %1$s. %2$s requires at least %3$s. With your version the plugin doesn\'t work.<br />Please Update.', TWOCLICK_TEXTDOMAIN),
+								$wp_scripts->registered['jquery']->ver,
+								__('2-Click Social Media Buttons', TWOCLICK_TEXTDOMAIN),
+								TWOCLICK_JQUERY_REQUIERED
+							);
+							?>
+						</p>
+					</div>
+					<?php
+				}
 				/**
 				 * Setting the active tab
 				 */
@@ -732,7 +760,8 @@ if(!class_exists('Twoclick_Social_Media_Buttons_Backend')) {
 						<form method="post" action="options.php">
 							<?php
 							settings_fields($this->var_sOptionsGroup);
-							$options = get_option('twoclick_buttons_settings');
+// 							$options = get_option('twoclick_buttons_settings');
+							$options = $this->_get_option();
 							?>
 							<input type="hidden" value="<?php echo $this->var_sActiveTab; ?>" name="twoclick_buttons_settings[twoclick_buttons_settings_section]" id="twoclick_buttons_settings[twoclick_buttons_settings_section]" />
 							<div id="twoclick-options-tabs" class="clearfix">
@@ -779,8 +808,22 @@ if(!class_exists('Twoclick_Social_Media_Buttons_Backend')) {
 									'id' => 'twoclick_buttons_settings[twoclick_buttons_settings_submit]'
 								));
 
+								/**
+								 * CSS des Reset-Buttons
+								 *
+								 * Mit WordPress 3.5 wird die secondary-Class im CSS nicht mehr richtig erkannt,
+								 * also muss hier ein Workaround her.
+								 *
+								 * @since 1.5
+								 * @author ppfeufer
+								 */
+								$var_sResetCssClasses = 'delete';
+								if(version_compare($GLOBALS['wp_version'], '3.5-alpha', '>=')) {
+									$var_sResetCssClasses = 'secondary delete twoclick-reset-options';
+								}
+
 								// Zurücksetzen
-								submit_button(__('Reset Options', TWOCLICK_TEXTDOMAIN), 'delete', 'twoclick_buttons_settings[twoclick_buttons_settings_reset]', false, array(
+								submit_button(__('Reset Options', TWOCLICK_TEXTDOMAIN), $var_sResetCssClasses, 'twoclick_buttons_settings[twoclick_buttons_settings_reset]', false, array(
 									'id' => 'twoclick_buttons_settings[twoclick_buttons_settings_reset]',
 									'onclick' => 'return confirm(' . __('&quot;Do you really want to reset your configuration?&quot;', TWOCLICK_TEXTDOMAIN) . ');'
 	 							));
@@ -966,6 +1009,44 @@ if(!class_exists('Twoclick_Social_Media_Buttons_Backend')) {
 		 */
 		private function render_button_settings() {
 			?>
+			<!-- Language -->
+			<div class="metabox-holder clearfix">
+				<div id="post-body">
+					<div id="post-body-content">
+						<div class="postbox clearfix">
+							<h3><span><?php _e('Language Settings <em>(Failover)</em>', TWOCLICK_TEXTDOMAIN); ?></span></h3>
+							<div class="inside">
+								<div style="clear:both;">
+									<div>
+										<label for="twoclick_buttons_settings[twoclick_buttons_language]" style="display:inline-block; width:100px;"><?php _e('Lanuage:', TWOCLICK_TEXTDOMAIN); ?></label>
+										<select name="twoclick_buttons_settings[twoclick_buttons_language]">
+											<option <?php if(!isset($this->array_TwoclickButtonsOptions['twoclick_buttons_language'])) echo 'selected="selected"'; ?> value="">&nbsp;</option>
+											<optgroup label="<?php _e('German', TWOCLICK_TEXTDOMAIN); ?>">
+												<option <?php if(isset($this->array_TwoclickButtonsOptions['twoclick_buttons_language']) && $this->array_TwoclickButtonsOptions['twoclick_buttons_language'] == 'de_DE') echo 'selected="selected"'; ?> value="de_DE"><?php _e('Germany (de_DE)', TWOCLICK_TEXTDOMAIN); ?></option>
+												<option <?php if(isset($this->array_TwoclickButtonsOptions['twoclick_buttons_language']) && $this->array_TwoclickButtonsOptions['twoclick_buttons_language'] == 'de_AT') echo 'selected="selected"'; ?> value="de_AT"><?php _e('Austria (de_AT)', TWOCLICK_TEXTDOMAIN); ?></option>
+												<option <?php if(isset($this->array_TwoclickButtonsOptions['twoclick_buttons_language']) && $this->array_TwoclickButtonsOptions['twoclick_buttons_language'] == 'de_CH') echo 'selected="selected"'; ?> value="de_CH"><?php _e('Switzerland (de_CH)', TWOCLICK_TEXTDOMAIN); ?></option>
+												<option value="">&nbsp;</option>
+											</optgroup>
+											<optgroup label="<?php _e('English', TWOCLICK_TEXTDOMAIN); ?>">
+												<option <?php if(isset($this->array_TwoclickButtonsOptions['twoclick_buttons_language']) && $this->array_TwoclickButtonsOptions['twoclick_buttons_language'] == 'en_GB') echo 'selected="selected"'; ?> value="en_GB"><?php _e('United Kingdom (en_GB)', TWOCLICK_TEXTDOMAIN); ?></option>
+												<option <?php if(isset($this->array_TwoclickButtonsOptions['twoclick_buttons_language']) && $this->array_TwoclickButtonsOptions['twoclick_buttons_language'] == 'en_US') echo 'selected="selected"'; ?> value="en_US"><?php _e('United States (en_US)', TWOCLICK_TEXTDOMAIN); ?></option>
+											</optgroup>
+										</select>
+									</div>
+									<div style="margin-left:104px;">
+										<p>
+											<?php _e('If you have problems with the active buttons - facebook doens\'t load - try to set the language manually. If anything works fine, ignore this setting.', TWOCLICK_TEXTDOMAIN); ?>
+										</p>
+										<p>
+											<?php printf(__('Your current language <em>(set in your wp_config.php)</em>: %1$s', TWOCLICK_TEXTDOMAIN), get_locale()); ?>
+										</p>
+									</div>
+								</div>
+							</div>
+						</div>
+					</div>
+				</div>
+			</div>
 			<!-- Facebook -->
 			<div class="metabox-holder clearfix">
 				<div id="post-body">
@@ -1195,21 +1276,19 @@ if(!class_exists('Twoclick_Social_Media_Buttons_Backend')) {
 										<span class="description"><?php _e('Links starting with http://', TWOCLICK_TEXTDOMAIN); ?></span>
 									</div>
 								</div>
-								<div>
+								<div style="margin-left:100px;">
 									<?php
 									if(!empty($this->array_TwoclickButtonsOptions['twoclick_buttons_postthumbnail'])) {
 										?>
-										<div>
-											<p><img src="<?php echo $this->array_TwoclickButtonsOptions['twoclick_buttons_postthumbnail']; ?>" /></p>
-										</div>
+										<p>
+											<img src="<?php echo $this->array_TwoclickButtonsOptions['twoclick_buttons_postthumbnail']; ?>" />
+										</p>
 										<?php
 									} // END if(!empty($this->array_TwoclickButtonsOptions['twoclick_buttons_postthumbnail'))
 									?>
-									<div>
-										<p>
-											<?php _e('This image is taken for Facebook, Google+ and Pinterest if there is no postthumbnail or other image inside the article or page. If empty, no image will be used for and the pinterest-button will be disabled for this article.', TWOCLICK_TEXTDOMAIN); ?>
-										</p>
-									</div>
+									<p>
+										<?php _e('This image is taken for Facebook, Google+ and Pinterest if there is no postthumbnail or other image inside the article or page. If empty, no image will be used for and the pinterest-button will be disabled for this article.', TWOCLICK_TEXTDOMAIN); ?>
+									</p>
 								</div>
 							</div>
 						</div>
