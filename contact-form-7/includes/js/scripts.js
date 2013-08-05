@@ -7,6 +7,9 @@
 
 			_wpcf7 = $.extend({ cached: 0 }, _wpcf7);
 
+			_wpcf7.supportHtml5Placeholder
+				= 'placeholder' in document.createElement('input');
+
 			$('div.wpcf7 > form').ajaxForm({
 				beforeSubmit: function(formData, jqForm, options) {
 					jqForm.wpcf7ClearResponseOutput();
@@ -14,7 +17,7 @@
 					return true;
 				},
 				beforeSerialize: function(jqForm, options) {
-					jqForm.find('.wpcf7-use-title-as-watermark.watermark').each(function(i, n) {
+					jqForm.find('[placeholder].placeheld').each(function(i, n) {
 						$(n).val('');
 					});
 					return true;
@@ -22,6 +25,9 @@
 				data: { '_wpcf7_is_ajax_call': 1 },
 				dataType: 'json',
 				success: function(data) {
+					if (! $.isPlainObject(data) || $.isEmptyObject(data))
+						return;
+
 					var ro = $(data.into).find('div.wpcf7-response-output');
 					$(data.into).wpcf7ClearResponseOutput();
 
@@ -75,8 +81,8 @@
 					if (1 == data.mailSent)
 						$(data.into).find('form').resetForm().clearForm();
 
-					$(data.into).find('.wpcf7-use-title-as-watermark.watermark').each(function(i, n) {
-						$(n).val($(n).attr('title'));
+					$(data.into).find('[placeholder].placeheld').each(function(i, n) {
+						$(n).val($(n).attr('placeholder'));
 					});
 
 					$(data.into).wpcf7FillResponseOutput(data.message);
@@ -101,19 +107,25 @@
 					});
 				});
 
-				$(n).find('.wpcf7-use-title-as-watermark').each(function(i, n) {
+				$(n).find('[placeholder]').each(function(i, n) {
 					var input = $(n);
-					input.val(input.attr('title'));
-					input.addClass('watermark');
+
+					if (_wpcf7.supportHtml5Placeholder)
+						return;
+
+					input.val(input.attr('placeholder'));
+					input.addClass('placeheld');
 
 					input.focus(function() {
-						if ($(this).hasClass('watermark'))
-							$(this).val('').removeClass('watermark');
+						if ($(this).hasClass('placeheld'))
+							$(this).val('').removeClass('placeheld');
 					});
 
 					input.blur(function() {
-						if ('' == $(this).val())
-							$(this).val($(this).attr('title')).addClass('watermark');
+						if ('' == $(this).val()) {
+							$(this).val($(this).attr('placeholder'));
+							$(this).addClass('placeheld');
+						}
 					});
 				});
 			});
@@ -183,7 +195,7 @@
 			var unitTag = $(this).find('input[name="_wpcf7_unit_tag"]').val();
 
 			$.getJSON(url,
-				{ _wpcf7_is_ajax_call: 1, _wpcf7: id },
+				{ _wpcf7_is_ajax_call: 1, _wpcf7: id, _wpcf7_request_ver: $.now() },
 				function(data) {
 					if (data && data.captcha)
 						$('#' + unitTag).wpcf7RefillCaptcha(data.captcha);
